@@ -4,6 +4,16 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { useParams } from "next/navigation";
 import Link from "next/link";
+import {
+  Scissors,
+  Zap,
+  User,
+  Package,
+  ClipboardList,
+  Settings,
+  Building2,
+  Globe,
+} from "lucide-react";
 import { usePayrollStore } from "@/lib/store/payroll-store";
 import { QuickEntryForm } from "@/components/entry/QuickEntryForm";
 import { TailorEntryView } from "@/components/entry/TailorEntryView";
@@ -39,30 +49,35 @@ export default function DashboardPage() {
   const currentTailor = tailors.find((t) => t.id === selectedTailorForView) || tailors[0];
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col font-sans">
+    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans">
       {/* Top Bar */}
-      <header className="sticky top-0 z-40 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 px-4 sm:px-8 py-3">
+      <header className="sticky top-0 z-40 bg-slate-900/80 backdrop-blur-xl border-b border-slate-800/80 px-4 sm:px-8 py-3">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <Link href={`/${locale}`} className="flex items-center gap-2">
-            <span className="text-2xl">🪡</span>
-            <span className="text-xl font-black bg-gradient-to-r from-violet-600 to-fuchsia-500 bg-clip-text text-transparent">
+          <Link href={`/${locale}`} className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-violet-600/20 border border-violet-500/30 flex items-center justify-center text-violet-400">
+              <Scissors className="w-5 h-5" />
+            </div>
+            <span className="text-xl font-bold tracking-tight text-white">
               {t("common.appName")}
             </span>
           </Link>
 
           <div className="flex items-center gap-3">
-            <span className="text-xs font-bold px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300">
-              🟢 Shree Ganesh Garments
-            </span>
-            <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl">
+            <div className="hidden sm:flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold">
+              <Building2 className="w-3.5 h-3.5" />
+              <span>Shree Ganesh Garments</span>
+            </div>
+
+            <div className="flex items-center gap-1 bg-slate-900 border border-slate-800 p-1 rounded-xl">
+              <Globe className="w-3.5 h-3.5 text-slate-400 ml-1.5 mr-0.5" />
               {["en", "gu", "hi"].map((l) => (
                 <Link
                   key={l}
                   href={`/${l}/dashboard`}
-                  className={`px-2.5 py-1 rounded-lg text-xs font-bold transition ${
+                  className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition ${
                     locale === l
-                      ? "bg-violet-600 text-white shadow"
-                      : "text-slate-600 dark:text-slate-400 hover:text-slate-900"
+                      ? "bg-violet-600 text-white"
+                      : "text-slate-400 hover:text-slate-200"
                   }`}
                 >
                   {l.toUpperCase()}
@@ -76,60 +91,65 @@ export default function DashboardPage() {
       {/* Main Container */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-8 py-6 space-y-6">
         {/* Navigation Tabs */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-2 border-b border-slate-200 dark:border-slate-800">
+        <div className="flex items-center gap-2 overflow-x-auto pb-2 border-b border-slate-800/80">
           <button
             onClick={() => setActiveTab("quickEntry")}
-            className={`px-5 py-2.5 rounded-2xl font-bold text-sm whitespace-nowrap transition ${
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-semibold text-xs sm:text-sm whitespace-nowrap transition ${
               activeTab === "quickEntry"
-                ? "bg-violet-600 text-white shadow-lg shadow-violet-500/25"
-                : "bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:bg-slate-100"
+                ? "bg-violet-600 text-white shadow-md shadow-violet-600/20"
+                : "bg-slate-900/60 text-slate-400 hover:text-slate-200 hover:bg-slate-900 border border-slate-800"
             }`}
           >
-            ⚡ {t("nav.quickEntry")}
+            <Zap className="w-4 h-4 text-violet-300" />
+            <span>{t("nav.quickEntry")}</span>
           </button>
 
           <button
             onClick={() => setActiveTab("tailorView")}
-            className={`px-5 py-2.5 rounded-2xl font-bold text-sm whitespace-nowrap transition ${
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-semibold text-xs sm:text-sm whitespace-nowrap transition ${
               activeTab === "tailorView"
-                ? "bg-violet-600 text-white shadow-lg shadow-violet-500/25"
-                : "bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:bg-slate-100"
+                ? "bg-violet-600 text-white shadow-md shadow-violet-600/20"
+                : "bg-slate-900/60 text-slate-400 hover:text-slate-200 hover:bg-slate-900 border border-slate-800"
             }`}
           >
-            👤 {t("nav.myEntries")}
+            <User className="w-4 h-4" />
+            <span>{t("nav.myEntries")}</span>
           </button>
 
           <button
             onClick={() => setActiveTab("lots")}
-            className={`px-5 py-2.5 rounded-2xl font-bold text-sm whitespace-nowrap transition ${
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-semibold text-xs sm:text-sm whitespace-nowrap transition ${
               activeTab === "lots"
-                ? "bg-violet-600 text-white shadow-lg shadow-violet-500/25"
-                : "bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:bg-slate-100"
+                ? "bg-violet-600 text-white shadow-md shadow-violet-600/20"
+                : "bg-slate-900/60 text-slate-400 hover:text-slate-200 hover:bg-slate-900 border border-slate-800"
             }`}
           >
-            📦 {t("nav.lots")}
+            <Package className="w-4 h-4" />
+            <span>{t("nav.lots")}</span>
           </button>
 
           <button
             onClick={() => setActiveTab("entries")}
-            className={`px-5 py-2.5 rounded-2xl font-bold text-sm whitespace-nowrap transition ${
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-semibold text-xs sm:text-sm whitespace-nowrap transition ${
               activeTab === "entries"
-                ? "bg-violet-600 text-white shadow-lg shadow-violet-500/25"
-                : "bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:bg-slate-100"
+                ? "bg-violet-600 text-white shadow-md shadow-violet-600/20"
+                : "bg-slate-900/60 text-slate-400 hover:text-slate-200 hover:bg-slate-900 border border-slate-800"
             }`}
           >
-            📋 {t("nav.entries")}
+            <ClipboardList className="w-4 h-4" />
+            <span>{t("nav.entries")}</span>
           </button>
 
           <button
             onClick={() => setActiveTab("manage")}
-            className={`px-5 py-2.5 rounded-2xl font-bold text-sm whitespace-nowrap transition ${
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-semibold text-xs sm:text-sm whitespace-nowrap transition ${
               activeTab === "manage"
-                ? "bg-violet-600 text-white shadow-lg shadow-violet-500/25"
-                : "bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:bg-slate-100"
+                ? "bg-violet-600 text-white shadow-md shadow-violet-600/20"
+                : "bg-slate-900/60 text-slate-400 hover:text-slate-200 hover:bg-slate-900 border border-slate-800"
             }`}
           >
-            ⚙️ {t("nav.tailors")} & {t("nav.operations")}
+            <Settings className="w-4 h-4" />
+            <span>{t("nav.tailors")} & {t("nav.operations")}</span>
           </button>
         </div>
 
@@ -146,12 +166,12 @@ export default function DashboardPage() {
 
         {activeTab === "tailorView" && (
           <div className="space-y-4">
-            <div className="flex items-center justify-center gap-3 bg-white dark:bg-slate-900 p-3 rounded-2xl shadow max-w-xl mx-auto">
-              <label className="text-xs font-bold text-slate-500 uppercase">{t("entry.selectTailor")}:</label>
+            <div className="flex items-center justify-center gap-3 bg-slate-900 p-3 rounded-2xl border border-slate-800 max-w-xl mx-auto">
+              <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">{t("entry.selectTailor")}:</label>
               <select
                 value={selectedTailorForView}
                 onChange={(e) => setSelectedTailorForView(e.target.value)}
-                className="px-3 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 text-sm font-bold"
+                className="px-3 py-1.5 rounded-xl bg-slate-800 text-sm font-semibold text-white border border-slate-700"
               >
                 {tailors.map((tailor) => (
                   <option key={tailor.id} value={tailor.id}>

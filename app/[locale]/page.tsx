@@ -1,15 +1,23 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { useParams } from "next/navigation";
 import Link from "next/link";
+import {
+  Scissors,
+  ClipboardCheck,
+  UserCheck,
+  ArrowRight,
+  ShieldCheck,
+  Sparkles,
+  BarChart3,
+  Globe,
+} from "lucide-react";
 
 export default function HomePage() {
   const t = useTranslations();
   const params = useParams();
   const locale = (params.locale as string) || "en";
-  const [showToast, setShowToast] = useState(false);
 
   const locales = [
     { code: "en", label: "English" },
@@ -17,129 +25,130 @@ export default function HomePage() {
     { code: "hi", label: "हिन्दी" },
   ];
 
-  // Auto-dismiss toast after 3 seconds
-  useEffect(() => {
-    if (showToast) {
-      const timer = setTimeout(() => setShowToast(false), 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [showToast]);
-
   return (
-    <div className="flex-1 flex flex-col">
+    <div className="min-h-screen flex flex-col bg-slate-950 text-slate-100 font-sans selection:bg-violet-500 selection:text-white">
+      {/* Background Gradient Mesh */}
+      <div className="fixed inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(120,119,198,0.15),rgba(255,255,255,0))]" />
+
       {/* Navigation Bar */}
-      <nav className="sticky top-0 z-50 backdrop-blur-md bg-white/80 dark:bg-gray-950/80 border-b border-gray-200 dark:border-gray-800">
-        <div className="max-w-6xl mx-auto px-4 h-14 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <span className="text-xl">🧵</span>
-            <span className="font-bold text-lg tracking-tight bg-gradient-to-r from-violet-600 to-fuchsia-500 bg-clip-text text-transparent">
+      <nav className="relative z-50 border-b border-slate-800/80 bg-slate-950/70 backdrop-blur-xl">
+        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-violet-600/20 border border-violet-500/30 flex items-center justify-center text-violet-400 shadow-sm">
+              <Scissors className="w-5 h-5" />
+            </div>
+            <span className="font-bold text-xl tracking-tight bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent">
               {t("common.appName")}
             </span>
           </div>
-          <div className="flex items-center gap-2">
-            {locales.map((l) => (
-              <Link
-                key={l.code}
-                href={`/${l.code}`}
-                className={`px-2.5 py-1 rounded-md text-sm font-medium transition-colors ${
-                  locale === l.code
-                    ? "bg-violet-100 text-violet-700 dark:bg-violet-900/40 dark:text-violet-300"
-                    : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800"
-                }`}
-              >
-                {l.label}
-              </Link>
-            ))}
+
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-1 bg-slate-900/80 border border-slate-800 p-1 rounded-xl">
+              <Globe className="w-3.5 h-3.5 text-slate-400 ml-2 mr-1" />
+              {locales.map((l) => (
+                <Link
+                  key={l.code}
+                  href={`/${l.code}`}
+                  className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all ${
+                    locale === l.code
+                      ? "bg-violet-600 text-white shadow-sm"
+                      : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/60"
+                  }`}
+                >
+                  {l.label}
+                </Link>
+              ))}
+            </div>
+
+            <Link
+              href={`/${locale}/dashboard`}
+              className="px-4 py-2 rounded-xl bg-violet-600 hover:bg-violet-500 text-white text-xs font-semibold transition shadow-sm hover:shadow-violet-600/20"
+            >
+              {t("nav.dashboard")}
+            </Link>
           </div>
         </div>
       </nav>
 
       {/* Hero Section */}
-      <main className="flex-1 flex flex-col items-center justify-center px-4 py-16">
-        <div className="text-center max-w-2xl mx-auto space-y-6">
-          {/* Logo / Icon */}
-          <div className="mx-auto w-20 h-20 rounded-2xl bg-gradient-to-br from-violet-500 to-fuchsia-500 flex items-center justify-center text-4xl shadow-lg shadow-violet-500/25">
-            🧵
+      <main className="relative flex-1 flex flex-col items-center justify-center px-6 py-20">
+        <div className="text-center max-w-3xl mx-auto space-y-8">
+          {/* Badge */}
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-violet-500/30 bg-violet-500/10 text-violet-300 text-xs font-medium backdrop-blur-md">
+            <Sparkles className="w-3.5 h-3.5 text-violet-400" />
+            <span>Modern Piece-Rate Payroll System for India</span>
           </div>
 
-          {/* Title */}
-          <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight">
-            <span className="bg-gradient-to-r from-violet-600 via-fuchsia-500 to-pink-500 bg-clip-text text-transparent">
-              {t("home.welcome")}
+          {/* Headline */}
+          <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight text-white leading-[1.15]">
+            Piece-rate payroll <br />
+            <span className="bg-gradient-to-r from-violet-400 via-fuchsia-300 to-indigo-300 bg-clip-text text-transparent">
+              built for speed & accuracy
             </span>
           </h1>
 
-          {/* Tagline */}
-          <p className="text-lg text-gray-600 dark:text-gray-400 max-w-lg mx-auto leading-relaxed">
+          {/* Subtitle */}
+          <p className="text-lg text-slate-400 max-w-xl mx-auto font-normal leading-relaxed">
             {t("home.description")}
           </p>
 
-          {/* CTA Button */}
-          <div className="pt-2">
+          {/* CTA Buttons */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
             <Link
               href={`/${locale}/dashboard`}
-              className="inline-block px-8 py-3.5 rounded-xl bg-gradient-to-r from-violet-600 to-fuchsia-500 text-white font-semibold text-base shadow-lg shadow-violet-500/25 hover:shadow-violet-500/40 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
+              className="w-full sm:w-auto h-12 px-8 rounded-xl bg-violet-600 hover:bg-violet-500 text-white font-semibold text-sm shadow-lg shadow-violet-600/25 transition-all flex items-center justify-center gap-2 group"
               id="btn-get-started"
             >
-              🚀 {t("home.getStarted")}
+              <span>{t("home.getStarted")}</span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
             </Link>
           </div>
         </div>
 
-        {/* Feature Cards */}
-        <div id="features" className="mt-16 grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl w-full">
+        {/* Feature Cards Grid */}
+        <div id="features" className="mt-20 grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl w-full">
           {/* Manager Card */}
-          <div className="group relative overflow-hidden rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6 hover:border-violet-300 dark:hover:border-violet-700 transition-colors duration-300">
-            <div className="absolute inset-0 bg-gradient-to-br from-violet-500/5 to-fuchsia-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-            <div className="relative">
-              <div className="w-10 h-10 rounded-lg bg-violet-100 dark:bg-violet-900/40 flex items-center justify-center text-xl mb-3">
-                📋
-              </div>
-              <h2 className="font-bold text-lg mb-1.5">{t("home.forManagers")}</h2>
-              <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
-                {t("home.managersDescription")}
-              </p>
+          <div className="rounded-2xl border border-slate-800 bg-slate-900/50 p-6 backdrop-blur-sm hover:border-slate-700 transition space-y-3">
+            <div className="w-10 h-10 rounded-xl bg-violet-500/10 border border-violet-500/20 flex items-center justify-center text-violet-400">
+              <ClipboardCheck className="w-5 h-5" />
             </div>
+            <h3 className="font-bold text-lg text-white">{t("home.forManagers")}</h3>
+            <p className="text-sm text-slate-400 leading-relaxed">
+              {t("home.managersDescription")}
+            </p>
           </div>
 
           {/* Tailor Card */}
-          <div className="group relative overflow-hidden rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6 hover:border-fuchsia-300 dark:hover:border-fuchsia-700 transition-colors duration-300">
-            <div className="absolute inset-0 bg-gradient-to-br from-fuchsia-500/5 to-pink-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-            <div className="relative">
-              <div className="w-10 h-10 rounded-lg bg-fuchsia-100 dark:bg-fuchsia-900/40 flex items-center justify-center text-xl mb-3">
-                ✂️
-              </div>
-              <h2 className="font-bold text-lg mb-1.5">{t("home.forTailors")}</h2>
-              <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
-                {t("home.tailorsDescription")}
-              </p>
+          <div className="rounded-2xl border border-slate-800 bg-slate-900/50 p-6 backdrop-blur-sm hover:border-slate-700 transition space-y-3">
+            <div className="w-10 h-10 rounded-xl bg-fuchsia-500/10 border border-fuchsia-500/20 flex items-center justify-center text-fuchsia-400">
+              <UserCheck className="w-5 h-5" />
             </div>
+            <h3 className="font-bold text-lg text-white">{t("home.forTailors")}</h3>
+            <p className="text-sm text-slate-400 leading-relaxed">
+              {t("home.tailorsDescription")}
+            </p>
+          </div>
+
+          {/* Enterprise Card */}
+          <div className="rounded-2xl border border-slate-800 bg-slate-900/50 p-6 backdrop-blur-sm hover:border-slate-700 transition space-y-3">
+            <div className="w-10 h-10 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400">
+              <BarChart3 className="w-5 h-5" />
+            </div>
+            <h3 className="font-bold text-lg text-white">Multi-Unit Isolation</h3>
+            <p className="text-sm text-slate-400 leading-relaxed">
+              Row Level Security ensures unit data is 100% isolated, audited, and secure.
+            </p>
           </div>
         </div>
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-gray-200 dark:border-gray-800 py-6 text-center text-sm text-gray-500 dark:text-gray-400">
-        <p>
-          {t("common.appName")} &mdash; {t("common.tagline")}
-        </p>
-      </footer>
-
-      {/* Toast notification */}
-      {showToast && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 animate-[slideUp_0.3s_ease-out]">
-          <div className="flex items-center gap-3 px-5 py-3 rounded-xl bg-gray-900 dark:bg-white text-white dark:text-gray-900 shadow-2xl text-sm font-medium">
-            <span className="text-lg">🚀</span>
-            <span>Sign-in coming soon — stay tuned!</span>
-            <button
-              onClick={() => setShowToast(false)}
-              className="ml-2 text-white/60 dark:text-gray-400 hover:text-white dark:hover:text-gray-900 transition-colors"
-            >
-              ✕
-            </button>
-          </div>
+      <footer className="border-t border-slate-900 py-6 text-center text-xs text-slate-500">
+        <div className="flex items-center justify-center gap-2">
+          <ShieldCheck className="w-4 h-4 text-emerald-500" />
+          <span>{t("common.appName")} &mdash; {t("common.tagline")}</span>
         </div>
-      )}
+      </footer>
     </div>
   );
 }

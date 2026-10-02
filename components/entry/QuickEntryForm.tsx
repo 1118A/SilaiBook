@@ -2,6 +2,17 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
+import {
+  Zap,
+  Save,
+  RotateCcw,
+  CheckCircle2,
+  AlertCircle,
+  Calendar,
+  Layers,
+  User,
+  Scissors,
+} from "lucide-react";
 import { Tailor, Lot, Operation, PieceEntry } from "@/lib/types/payroll";
 import { NumberPad } from "./NumberPad";
 import { formatINR, fromPaise, toPaise, multiplyPaise } from "@/lib/money";
@@ -29,7 +40,6 @@ export function QuickEntryForm({ tailors, lots, operations, lastEntry, onSave }:
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
 
-  // Auto-fill default rate when operation changes
   const handleOperationChange = (opId: string) => {
     setOperationId(opId);
     const selectedOp = operations.find((o) => o.id === opId);
@@ -83,44 +93,54 @@ export function QuickEntryForm({ tailors, lots, operations, lastEntry, onSave }:
   };
 
   return (
-    <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl shadow-xl border border-slate-200 dark:border-slate-800 max-w-xl mx-auto">
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-black tracking-tight text-slate-900 dark:text-white">
-          ⚡ {t("entry.quickEntryTitle")}
-        </h2>
+    <div className="bg-slate-900 p-6 rounded-3xl border border-slate-800 shadow-xl max-w-xl mx-auto space-y-6">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-lg bg-violet-500/20 border border-violet-500/30 flex items-center justify-center text-violet-400">
+            <Zap className="w-4 h-4" />
+          </div>
+          <h2 className="text-xl font-bold text-white tracking-tight">
+            {t("entry.quickEntryTitle")}
+          </h2>
+        </div>
+
         {lastEntry && (
           <button
             type="button"
             onClick={handleRepeatLast}
-            className="px-3 py-1.5 rounded-full text-xs font-semibold bg-violet-100 text-violet-700 dark:bg-violet-900/50 dark:text-violet-300 hover:bg-violet-200 active:scale-95 transition"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-violet-600/20 border border-violet-500/30 text-violet-300 hover:bg-violet-600/30 transition"
           >
-            {t("entry.repeatLast")}
+            <RotateCcw className="w-3.5 h-3.5" />
+            <span>{t("entry.repeatLast")}</span>
           </button>
         )}
       </div>
 
       {errorMsg && (
-        <div className="mb-4 p-3 bg-rose-50 border border-rose-200 text-rose-700 dark:bg-rose-950/40 dark:border-rose-900 dark:text-rose-300 rounded-xl text-sm font-semibold">
-          ⚠️ {errorMsg}
+        <div className="flex items-center gap-2 p-3 bg-rose-950/40 border border-rose-900/60 text-rose-300 rounded-xl text-xs font-semibold">
+          <AlertCircle className="w-4 h-4 text-rose-400 shrink-0" />
+          <span>{errorMsg}</span>
         </div>
       )}
 
       {successMsg && (
-        <div className="mb-4 p-3 bg-emerald-50 border border-emerald-200 text-emerald-700 dark:bg-emerald-950/40 dark:border-emerald-900 dark:text-emerald-300 rounded-xl text-sm font-semibold">
-          ✅ {successMsg}
+        <div className="flex items-center gap-2 p-3 bg-emerald-950/40 border border-emerald-900/60 text-emerald-300 rounded-xl text-xs font-semibold">
+          <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+          <span>{successMsg}</span>
         </div>
       )}
 
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* Tailor Select */}
         <div>
-          <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">
-            {t("entry.selectTailor")}
+          <label className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">
+            <User className="w-3.5 h-3.5 text-slate-500" />
+            <span>{t("entry.selectTailor")}</span>
           </label>
           <select
             value={tailorId}
             onChange={(e) => setTailorId(e.target.value)}
-            className="w-full h-12 px-4 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white font-semibold border border-slate-300 dark:border-slate-700 focus:ring-2 focus:ring-violet-500"
+            className="w-full h-11 px-3.5 rounded-xl bg-slate-950 text-white font-semibold text-sm border border-slate-800 focus:border-violet-500 focus:outline-none"
           >
             <option value="">-- {t("entry.selectTailor")} --</option>
             {tailors.filter(t => t.active).map((t) => (
@@ -133,13 +153,14 @@ export function QuickEntryForm({ tailors, lots, operations, lastEntry, onSave }:
 
         {/* Lot Select */}
         <div>
-          <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">
-            {t("entry.selectLot")}
+          <label className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">
+            <Layers className="w-3.5 h-3.5 text-slate-500" />
+            <span>{t("entry.selectLot")}</span>
           </label>
           <select
             value={lotId}
             onChange={(e) => setLotId(e.target.value)}
-            className="w-full h-12 px-4 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white font-semibold border border-slate-300 dark:border-slate-700 focus:ring-2 focus:ring-violet-500"
+            className="w-full h-11 px-3.5 rounded-xl bg-slate-950 text-white font-semibold text-sm border border-slate-800 focus:border-violet-500 focus:outline-none"
           >
             <option value="">-- {t("entry.selectLot")} --</option>
             {lots.filter(l => l.status === "active").map((l) => (
@@ -153,13 +174,14 @@ export function QuickEntryForm({ tailors, lots, operations, lastEntry, onSave }:
         {/* Operation & Rate */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">
-              {t("entry.selectOperation")}
+            <label className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">
+              <Scissors className="w-3.5 h-3.5 text-slate-500" />
+              <span>{t("entry.selectOperation")}</span>
             </label>
             <select
               value={operationId}
               onChange={(e) => handleOperationChange(e.target.value)}
-              className="w-full h-12 px-4 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white font-semibold border border-slate-300 dark:border-slate-700 focus:ring-2 focus:ring-violet-500"
+              className="w-full h-11 px-3.5 rounded-xl bg-slate-950 text-white font-semibold text-sm border border-slate-800 focus:border-violet-500 focus:outline-none"
             >
               <option value="">-- {t("entry.selectOperation")} --</option>
               {operations.map((o) => (
@@ -171,7 +193,7 @@ export function QuickEntryForm({ tailors, lots, operations, lastEntry, onSave }:
           </div>
 
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">
+            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">
               {t("entry.ratePerPiece")}
             </label>
             <input
@@ -180,51 +202,53 @@ export function QuickEntryForm({ tailors, lots, operations, lastEntry, onSave }:
               min="0"
               value={rateRupees}
               onChange={(e) => setRateRupees(parseFloat(e.target.value) || 0)}
-              className="w-full h-12 px-4 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white font-bold border border-slate-300 dark:border-slate-700 focus:ring-2 focus:ring-violet-500"
+              className="w-full h-11 px-3.5 rounded-xl bg-slate-950 text-white font-bold text-sm border border-slate-800 focus:border-violet-500 focus:outline-none"
             />
           </div>
         </div>
 
-        {/* Date selection */}
+        {/* Date Selection */}
         <div>
-          <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">
-            {t("entry.workDate")}
+          <label className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">
+            <Calendar className="w-3.5 h-3.5 text-slate-500" />
+            <span>{t("entry.workDate")}</span>
           </label>
           <input
             type="date"
             value={workDate}
             onChange={(e) => setWorkDate(e.target.value)}
-            className="w-full h-12 px-4 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white font-semibold border border-slate-300 dark:border-slate-700"
+            className="w-full h-11 px-3.5 rounded-xl bg-slate-950 text-white font-semibold text-sm border border-slate-800 focus:border-violet-500 focus:outline-none"
           />
         </div>
 
-        {/* Display Current Pieces & Total Value */}
-        <div className="p-4 rounded-2xl bg-violet-950/80 text-white flex items-center justify-between border border-violet-800 shadow-inner">
+        {/* Summary Card */}
+        <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800 flex items-center justify-between">
           <div>
-            <div className="text-xs uppercase font-semibold text-violet-300 tracking-wider">
+            <div className="text-[11px] uppercase font-semibold text-slate-400 tracking-wider">
               {t("entry.piecesCount")}
             </div>
-            <div className="text-4xl font-black">{pieces}</div>
+            <div className="text-3xl font-extrabold text-violet-400">{pieces}</div>
           </div>
           <div className="text-right">
-            <div className="text-xs uppercase font-semibold text-violet-300 tracking-wider">
+            <div className="text-[11px] uppercase font-semibold text-slate-400 tracking-wider">
               {t("entry.totalEarnings")}
             </div>
-            <div className="text-2xl font-bold text-emerald-400">
+            <div className="text-xl font-bold text-emerald-400">
               {formatINR(totalValuePaise)}
             </div>
           </div>
         </div>
 
-        {/* Big Number Pad */}
+        {/* Number Pad */}
         <NumberPad value={pieces} onChange={(val) => setPieces(val)} />
 
         {/* Save Button */}
         <button
           type="submit"
-          className="w-full h-16 mt-4 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-black text-xl shadow-lg shadow-emerald-500/25 hover:opacity-95 active:scale-98 transition flex items-center justify-center gap-2"
+          className="w-full h-14 mt-2 rounded-xl bg-violet-600 hover:bg-violet-500 text-white font-bold text-base shadow-lg shadow-violet-600/25 active:scale-98 transition flex items-center justify-center gap-2"
         >
-          💾 {t("entry.saveEntry")}
+          <Save className="w-5 h-5" />
+          <span>{t("entry.saveEntry")}</span>
         </button>
       </form>
     </div>

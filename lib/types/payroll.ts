@@ -83,3 +83,15 @@ export interface LotProgress {
   remaining_pieces: number;
   percentage: number;
 }
+
+export interface AuditLog {
+  id: string;
+  unit_id: string;
+  user_id: string;
+  action: string;
+  table_name: string;
+  record_id: string;
+  old_data?: Record<string, unknown>;
+  new_data?: Record<string, unknown>;
+  created_at: string;
+}
