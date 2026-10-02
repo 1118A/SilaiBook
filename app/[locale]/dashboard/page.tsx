@@ -16,6 +16,7 @@ import {
   ShieldCheck,
   History,
   DollarSign,
+  BarChart3,
 } from "lucide-react";
 import { usePayrollStore } from "@/lib/store/payroll-store";
 import { QuickEntryForm } from "@/components/entry/QuickEntryForm";
@@ -27,6 +28,17 @@ import { SalarySummaryTable } from "@/components/salary/SalarySummaryTable";
 import { LotManagement } from "@/components/lots/LotManagement";
 import { TailorManagement } from "@/components/management/TailorManagement";
 import { OperationManagement } from "@/components/management/OperationManagement";
+import { AnalyticsKPICards } from "@/components/analytics/AnalyticsKPICards";
+import { TailorPerformanceView } from "@/components/analytics/TailorPerformanceView";
+import { LeaderboardView } from "@/components/analytics/LeaderboardView";
+import { LotAnalyticsView } from "@/components/analytics/LotAnalyticsView";
+import { OperationAnalyticsView } from "@/components/analytics/OperationAnalyticsView";
+import {
+  getOverallAnalytics,
+  getTailorAnalytics,
+  getLotAnalytics,
+  getOperationAnalytics,
+} from "@/lib/analytics/engine";
 
 export default function DashboardPage() {
   const t = useTranslations();
@@ -60,12 +72,19 @@ export default function DashboardPage() {
     addOperation,
   } = usePayrollStore();
 
-  const [activeTab, setActiveTab] = useState<"salary" | "verification" | "quickEntry" | "tailorView" | "entries" | "lots" | "audit" | "manage">("salary");
+  const [activeTab, setActiveTab] = useState<"salary" | "analytics" | "verification" | "quickEntry" | "tailorView" | "entries" | "lots" | "audit" | "manage">("analytics");
   const [selectedTailorForView, setSelectedTailorForView] = useState<string>(tailors[0]?.id || "");
+  const [analyticsMonth] = useState<string>("2026-09");
 
   const activeTailors = tailors.filter((t) => t.active);
   const currentTailor = tailors.find((t) => t.id === selectedTailorForView) || tailors[0];
   const pendingCount = entries.filter((e) => e.status === "pending").length;
+
+  // Analytics Aggregates
+  const overallKPIs = getOverallAnalytics(entries, analyticsMonth);
+  const tailorPerformance = getTailorAnalytics(entries, tailors, analyticsMonth);
+  const lotMetrics = getLotAnalytics(entries, lots, tailors);
+  const operationMetrics = getOperationAnalytics(entries, operations);
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans">
@@ -111,6 +130,18 @@ export default function DashboardPage() {
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-8 py-6 space-y-6">
         {/* Navigation Tabs */}
         <div className="flex items-center gap-2 overflow-x-auto pb-2 border-b border-slate-800/80">
+          <button
+            onClick={() => setActiveTab("analytics")}
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-semibold text-xs sm:text-sm whitespace-nowrap transition ${
+              activeTab === "analytics"
+                ? "bg-violet-600 text-white shadow-md shadow-violet-600/20"
+                : "bg-slate-900/60 text-slate-400 hover:text-slate-200 hover:bg-slate-900 border border-slate-800"
+            }`}
+          >
+            <BarChart3 className="w-4 h-4 text-violet-300" />
+            <span>{t("nav.analytics")}</span>
+          </button>
+
           <button
             onClick={() => setActiveTab("salary")}
             className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-semibold text-xs sm:text-sm whitespace-nowrap transition ${
@@ -214,6 +245,16 @@ export default function DashboardPage() {
         </div>
 
         {/* Tab Content */}
+        {activeTab === "analytics" && (
+          <div className="space-y-6">
+            <AnalyticsKPICards kpis={overallKPIs} />
+            <LeaderboardView metrics={tailorPerformance} />
+            <TailorPerformanceView metrics={tailorPerformance} />
+            <LotAnalyticsView metrics={lotMetrics} />
+            <OperationAnalyticsView metrics={operationMetrics} />
+          </div>
+        )}
+
         {activeTab === "salary" && (
           <SalarySummaryTable
             tailors={tailors}

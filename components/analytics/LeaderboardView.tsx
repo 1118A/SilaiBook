@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { Trophy, Award, Medal, Eye, EyeOff } from "lucide-react";
+import { Trophy, Eye, EyeOff } from "lucide-react";
 import { TailorPerformanceMetric } from "@/lib/analytics/engine";
 import { formatINR } from "@/lib/money";
 

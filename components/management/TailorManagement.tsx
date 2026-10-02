@@ -117,11 +117,10 @@ export function TailorManagement({ tailors, onAddTailor, onToggleActive }: Tailo
             <button
               type="button"
               onClick={() => onToggleActive(tailor.id)}
-              className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase border transition ${
-                tailor.active
+              className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase border transition ${tailor.active
                   ? "bg-emerald-950 text-emerald-300 border-emerald-800/50"
                   : "bg-slate-900 text-slate-400 border-slate-800"
-              }`}
+                }`}
             >
               {tailor.active ? t("tailors.active") : t("tailors.archived")}
             </button>
@@ -131,3 +130,4 @@ export function TailorManagement({ tailors, onAddTailor, onToggleActive }: Tailo
     </div>
   );
 }
+// hello
