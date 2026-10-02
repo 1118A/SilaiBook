@@ -44,6 +44,7 @@
     "lots": "લોટ",
     "operations": "ઓપરેશન",
     "salary": "પગાર એન્જિન",
+    "analytics": "મેનેજર એનાલિટિક્સ",
     "settings": "સેટિંગ્સ"
   },
   "entry": {
@@ -109,6 +110,23 @@
     "downloadCSV": "CSV એક્સપોર્ટ કરો",
     "printPayslip": "પગાર સ્લિપ પ્રિન્ટ કરો",
     "negativeNetWarning": "ચેતવણી: ચોખ્ખો પગાર માઇનસમાં છે કારણ કે ઉપાડ ગ્રોસ કરતાં વધુ છે!"
+  },
+  "analytics": {
+    "title": "મેનેજર એનાલિટિક્સ ડેશબોર્ડ",
+    "piecesToday": "આજના વેરિફાઇડ પીસ",
+    "piecesMonth": "આ મહિનાના પીસ",
+    "payrollMonth": "આ મહિનાનો વેરિફાઇડ પગાર",
+    "pendingCount": "પેન્ડિંગ રિવ્યૂ",
+    "rejectionRate": "નામંજૂર દર %",
+    "tailorPerformance": "દરજી પરફોર્મન્સ અને ટ્રેન્ડ",
+    "leaderboard": "લીડરબોર્ડ રેન્કિંગ",
+    "toggleLeaderboard": "લીડરબોર્ડ બતાવો",
+    "avgPerDay": "સરેરાશ પીસ / દિવસ",
+    "bestDay": "શ્રેષ્ઠ દિવસ આઉટપુટ",
+    "lotCost": "મજૂરી ખર્ચ / પીસ",
+    "recentPace": "તાજેતરની ઝડપ (પીસ/દિવસ)",
+    "projectedDate": "અંદાજિત પૂર્ણ તારીખ",
+    "operationDistribution": "ઓપરેશન આઉટપુટ અને ભાવ"
   },
   "lots": {
     "title": "લોટ મેનેજમેન્ટ",

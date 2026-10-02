@@ -44,6 +44,7 @@
     "lots": "लॉट",
     "operations": "ऑपरेशन",
     "salary": "पगार इंजन",
+    "analytics": "मैनेजर एनालिटिक्स",
     "settings": "सेटिंग्स"
   },
   "entry": {
@@ -109,6 +110,23 @@
     "downloadCSV": "CSV डाउनलोड करें",
     "printPayslip": "पे-स्लिप प्रिंट करें",
     "negativeNetWarning": "चेतावनी: शुद्ध वेतन ऋणात्मक है क्योंकि एडवांस ग्रॉस कमाई से अधिक है!"
+  },
+  "analytics": {
+    "title": "मैनेजर एनालिटिक्स डैशबोर्ड",
+    "piecesToday": "आज के वेरिफाइड पीस",
+    "piecesMonth": "इस महीने के पीस",
+    "payrollMonth": "इस महीने का वेरिफाइड पगार",
+    "pendingCount": "पेंडिंग समीक्षा",
+    "rejectionRate": "अस्वीकृति दर %",
+    "tailorPerformance": "दर्जी प्रदर्शन व रुझान",
+    "leaderboard": "लीडरबोर्ड रैंकिंग",
+    "toggleLeaderboard": "लीडरबोर्ड दिखाएं",
+    "avgPerDay": "औसत पीस / दिन",
+    "bestDay": "उत्कृष्ट दिन आउटपुट",
+    "lotCost": "मजदूरी लागत / पीस",
+    "recentPace": "हाल की गति (पीस/दिन)",
+    "projectedDate": "अनुमानित पूर्ण तिथि",
+    "operationDistribution": "ऑपरेशन आउटपुट व औसत दरें"
   },
   "lots": {
     "title": "लॉट प्रबंधन",

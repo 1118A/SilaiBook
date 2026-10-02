@@ -44,6 +44,7 @@
     "lots": "Lots",
     "operations": "Operations",
     "salary": "Salary Engine",
+    "analytics": "Manager Analytics",
     "settings": "Settings"
   },
   "entry": {
@@ -109,6 +110,23 @@
     "downloadCSV": "Export CSV Sheet",
     "printPayslip": "Print Payslip",
     "negativeNetWarning": "Warning: Net salary is negative due to advances exceeding gross earnings!"
+  },
+  "analytics": {
+    "title": "Manager Analytics Dashboard",
+    "piecesToday": "Verified Pieces Today",
+    "piecesMonth": "Pieces This Month",
+    "payrollMonth": "Verified Payroll So Far",
+    "pendingCount": "Pending Reviews",
+    "rejectionRate": "Rejection Rate %",
+    "tailorPerformance": "Tailor Performance & Trends",
+    "leaderboard": "Leaderboard Ranking",
+    "toggleLeaderboard": "Show Leaderboard Ranking",
+    "avgPerDay": "Avg Pieces / Day",
+    "bestDay": "Best Day Output",
+    "lotCost": "Labour Cost / Piece",
+    "recentPace": "Recent Daily Pace",
+    "projectedDate": "Projected Completion",
+    "operationDistribution": "Operation Output & Average Rates"
   },
   "lots": {
     "title": "Lot Management",
