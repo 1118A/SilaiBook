@@ -13,11 +13,15 @@ import {
   Settings,
   Building2,
   Globe,
+  ShieldCheck,
+  History,
 } from "lucide-react";
 import { usePayrollStore } from "@/lib/store/payroll-store";
 import { QuickEntryForm } from "@/components/entry/QuickEntryForm";
 import { TailorEntryView } from "@/components/entry/TailorEntryView";
 import { EntryList } from "@/components/entry/EntryList";
+import { VerificationInbox } from "@/components/verification/VerificationInbox";
+import { AuditLogView } from "@/components/verification/AuditLogView";
 import { LotManagement } from "@/components/lots/LotManagement";
 import { TailorManagement } from "@/components/management/TailorManagement";
 import { OperationManagement } from "@/components/management/OperationManagement";
@@ -32,9 +36,16 @@ export default function DashboardPage() {
     lots,
     operations,
     entries,
+    auditLogs,
+    autoVerifyManager,
+    setAutoVerifyManager,
     lastEntry,
     getLotProgress,
     addEntry,
+    verifyEntry,
+    rejectEntry,
+    bulkVerifyTailorDay,
+    resubmitEntry,
     addLot,
     toggleLotStatus,
     addTailor,
@@ -42,11 +53,12 @@ export default function DashboardPage() {
     addOperation,
   } = usePayrollStore();
 
-  const [activeTab, setActiveTab] = useState<"quickEntry" | "tailorView" | "entries" | "lots" | "manage">("quickEntry");
+  const [activeTab, setActiveTab] = useState<"quickEntry" | "verification" | "tailorView" | "entries" | "lots" | "audit" | "manage">("verification");
   const [selectedTailorForView, setSelectedTailorForView] = useState<string>(tailors[0]?.id || "");
 
   const activeTailors = tailors.filter((t) => t.active);
   const currentTailor = tailors.find((t) => t.id === selectedTailorForView) || tailors[0];
+  const pendingCount = entries.filter((e) => e.status === "pending").length;
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans">
@@ -92,6 +104,23 @@ export default function DashboardPage() {
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-8 py-6 space-y-6">
         {/* Navigation Tabs */}
         <div className="flex items-center gap-2 overflow-x-auto pb-2 border-b border-slate-800/80">
+          <button
+            onClick={() => setActiveTab("verification")}
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-semibold text-xs sm:text-sm whitespace-nowrap transition ${
+              activeTab === "verification"
+                ? "bg-violet-600 text-white shadow-md shadow-violet-600/20"
+                : "bg-slate-900/60 text-slate-400 hover:text-slate-200 hover:bg-slate-900 border border-slate-800"
+            }`}
+          >
+            <ShieldCheck className="w-4 h-4 text-violet-300" />
+            <span>{t("nav.verificationInbox")}</span>
+            {pendingCount > 0 && (
+              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-violet-500 text-white">
+                {pendingCount}
+              </span>
+            )}
+          </button>
+
           <button
             onClick={() => setActiveTab("quickEntry")}
             className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-semibold text-xs sm:text-sm whitespace-nowrap transition ${
@@ -141,6 +170,18 @@ export default function DashboardPage() {
           </button>
 
           <button
+            onClick={() => setActiveTab("audit")}
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-semibold text-xs sm:text-sm whitespace-nowrap transition ${
+              activeTab === "audit"
+                ? "bg-violet-600 text-white shadow-md shadow-violet-600/20"
+                : "bg-slate-900/60 text-slate-400 hover:text-slate-200 hover:bg-slate-900 border border-slate-800"
+            }`}
+          >
+            <History className="w-4 h-4" />
+            <span>{t("nav.auditLog")}</span>
+          </button>
+
+          <button
             onClick={() => setActiveTab("manage")}
             className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-semibold text-xs sm:text-sm whitespace-nowrap transition ${
               activeTab === "manage"
@@ -154,6 +195,20 @@ export default function DashboardPage() {
         </div>
 
         {/* Tab Content */}
+        {activeTab === "verification" && (
+          <VerificationInbox
+            entries={entries}
+            tailors={tailors}
+            lots={lots}
+            operations={operations}
+            autoVerifyManager={autoVerifyManager}
+            onToggleAutoVerify={setAutoVerifyManager}
+            onVerify={verifyEntry}
+            onReject={rejectEntry}
+            onBulkVerify={bulkVerifyTailorDay}
+          />
+        )}
+
         {activeTab === "quickEntry" && (
           <QuickEntryForm
             tailors={activeTailors}
@@ -187,6 +242,7 @@ export default function DashboardPage() {
                 entries={entries}
                 lots={lots}
                 operations={operations}
+                onResubmit={resubmitEntry}
               />
             )}
           </div>
@@ -209,6 +265,8 @@ export default function DashboardPage() {
             operations={operations}
           />
         )}
+
+        {activeTab === "audit" && <AuditLogView logs={auditLogs} />}
 
         {activeTab === "manage" && (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

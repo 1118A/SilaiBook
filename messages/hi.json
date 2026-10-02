@@ -43,7 +43,7 @@
     "tailors": "दर्जी",
     "lots": "लॉट",
     "operations": "ऑपरेशन",
-    "salary": "पगार",
+    "salary": "पगार इंजन",
     "settings": "सेटिंग्स"
   },
   "entry": {
@@ -87,6 +87,28 @@
     "bulkVerifiedSuccess": "इस समूह की सभी प्रविष्टियां सत्यापित की गईं",
     "auditTrailTitle": "ऑडिट ट्रेल इतिहास",
     "onlyVerifiedCountInSalary": "नोट: केवल सत्यापित प्रविष्टियाँ ही वेतन में गिनी जाएँगी।"
+  },
+  "salary": {
+    "title": "मासिक पगार इंजन",
+    "selectMonth": "पगार का महीना चुनें",
+    "totalGross": "कुल ग्रॉस कमाई",
+    "totalNet": "कुल देय पगार",
+    "grossSalary": "ग्रॉस कमाई",
+    "bonus": "बोनस (+)",
+    "advance": "अग्रिम / एडवांस (−)",
+    "deduction": "कटौती (−)",
+    "netPayable": "देय शुद्ध पगार",
+    "pendingVisibility": "पेंडिंग (पगार में शामिल नहीं)",
+    "addAdjustment": "एडवांस/बोनस जोड़ें",
+    "adjustmentType": "प्रकार",
+    "amountRupees": "राशि (₹)",
+    "noteOptional": "विवरण / नोट",
+    "closeMonth": "महीना बंद व लॉक करें",
+    "reopenMonth": "महीना पुनः खोलें",
+    "monthLocked": "यह महीना बंद व लॉक है",
+    "downloadCSV": "CSV डाउनलोड करें",
+    "printPayslip": "पे-स्लिप प्रिंट करें",
+    "negativeNetWarning": "चेतावनी: शुद्ध वेतन ऋणात्मक है क्योंकि एडवांस ग्रॉस कमाई से अधिक है!"
   },
   "lots": {
     "title": "लॉट प्रबंधन",

@@ -43,7 +43,7 @@
     "tailors": "Tailors",
     "lots": "Lots",
     "operations": "Operations",
-    "salary": "Salary",
+    "salary": "Salary Engine",
     "settings": "Settings"
   },
   "entry": {
@@ -87,6 +87,28 @@
     "bulkVerifiedSuccess": "All entries verified for this group",
     "auditTrailTitle": "Audit Trail Log",
     "onlyVerifiedCountInSalary": "Note: Only verified entries count toward salary totals."
+  },
+  "salary": {
+    "title": "Monthly Salary Engine",
+    "selectMonth": "Select Salary Month",
+    "totalGross": "Total Gross Earnings",
+    "totalNet": "Total Net Payable",
+    "grossSalary": "Gross Work Value",
+    "bonus": "Bonus (+)",
+    "advance": "Salary Advance (−)",
+    "deduction": "Deduction (−)",
+    "netPayable": "Net Payable Salary",
+    "pendingVisibility": "Pending (Not in salary)",
+    "addAdjustment": "Add Adjustment",
+    "adjustmentType": "Type",
+    "amountRupees": "Amount (₹)",
+    "noteOptional": "Note / Description",
+    "closeMonth": "Lock & Close Month",
+    "reopenMonth": "Reopen Month",
+    "monthLocked": "Month Closed & Locked",
+    "downloadCSV": "Export CSV Sheet",
+    "printPayslip": "Print Payslip",
+    "negativeNetWarning": "Warning: Net salary is negative due to advances exceeding gross earnings!"
   },
   "lots": {
     "title": "Lot Management",

@@ -1,7 +1,8 @@
 "use client";
 
+import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { UserCheck, Phone, FileText, TrendingUp, Award } from "lucide-react";
+import { UserCheck, Phone, FileText, TrendingUp, Award, RotateCcw, AlertTriangle } from "lucide-react";
 import { PieceEntry, Tailor, Lot, Operation } from "@/lib/types/payroll";
 import { formatINR, multiplyPaise } from "@/lib/money";
 
@@ -10,11 +11,15 @@ interface TailorEntryViewProps {
   entries: PieceEntry[];
   lots: Lot[];
   operations: Operation[];
+  onResubmit?: (entryId: string, pieces?: number, note?: string) => void;
 }
 
-export function TailorEntryView({ tailor, entries, lots, operations }: TailorEntryViewProps) {
+export function TailorEntryView({ tailor, entries, lots, operations, onResubmit }: TailorEntryViewProps) {
   const t = useTranslations();
   const today = new Date().toISOString().split("T")[0];
+
+  const [resubmittingEntryId, setResubmittingEntryId] = useState<string | null>(null);
+  const [resubmitPieces, setResubmitPieces] = useState<number>(0);
 
   const tailorEntries = entries.filter((e) => e.tailor_id === tailor.id);
   const todaysEntries = tailorEntries.filter((e) => e.work_date === today);
@@ -24,6 +29,17 @@ export function TailorEntryView({ tailor, entries, lots, operations }: TailorEnt
     (acc, curr) => acc + multiplyPaise(curr.rate_paise, curr.pieces),
     0
   );
+
+  const handleOpenResubmit = (entry: PieceEntry) => {
+    setResubmittingEntryId(entry.id);
+    setResubmitPieces(entry.pieces);
+  };
+
+  const handleConfirmResubmit = () => {
+    if (!resubmittingEntryId || !onResubmit) return;
+    onResubmit(resubmittingEntryId, resubmitPieces, "Resubmitted by tailor");
+    setResubmittingEntryId(null);
+  };
 
   return (
     <div className="space-y-6 max-w-xl mx-auto">
@@ -93,26 +109,31 @@ export function TailorEntryView({ tailor, entries, lots, operations }: TailorEnt
               return (
                 <div
                   key={entry.id}
-                  className="p-4 rounded-2xl bg-slate-950 border border-slate-800/80 flex items-center justify-between"
+                  className="p-4 rounded-2xl bg-slate-950 border border-slate-800/80 space-y-2"
                 >
-                  <div>
-                    <div className="font-bold text-white text-sm">
-                      {lot ? `${lot.lot_no} (${lot.style})` : "Lot"}
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <div className="font-bold text-white text-sm">
+                        {lot ? `${lot.lot_no} (${lot.style})` : "Lot"}
+                      </div>
+                      <div className="text-xs text-slate-400 font-medium mt-0.5">
+                        {op ? op.name : "Operation"} • {entry.work_date}
+                      </div>
                     </div>
-                    <div className="text-xs text-slate-400 font-medium mt-0.5">
-                      {op ? op.name : "Operation"} • {entry.work_date}
+
+                    <div className="text-right">
+                      <div className="text-lg font-extrabold text-violet-400">
+                        {entry.pieces} pcs
+                      </div>
+                      <div className="text-xs font-semibold text-emerald-400">
+                        {formatINR(totalAmount)}
+                      </div>
                     </div>
                   </div>
 
-                  <div className="text-right">
-                    <div className="text-lg font-extrabold text-violet-400">
-                      {entry.pieces} pcs
-                    </div>
-                    <div className="text-xs font-semibold text-emerald-400">
-                      {formatINR(totalAmount)}
-                    </div>
+                  <div className="flex items-center justify-between border-t border-slate-900 pt-2">
                     <span
-                      className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-bold uppercase mt-1 ${
+                      className={`inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase ${
                         entry.status === "verified"
                           ? "bg-emerald-950 text-emerald-300 border border-emerald-800/50"
                           : entry.status === "rejected"
@@ -126,6 +147,27 @@ export function TailorEntryView({ tailor, entries, lots, operations }: TailorEnt
                         ? t("common.rejected")
                         : t("common.pending")}
                     </span>
+
+                    {entry.status === "rejected" && (
+                      <div className="flex items-center gap-2">
+                        {entry.note && (
+                          <span className="text-xs text-rose-400 font-medium flex items-center gap-1">
+                            <AlertTriangle className="w-3 h-3" />
+                            {entry.note}
+                          </span>
+                        )}
+                        {onResubmit && (
+                          <button
+                            type="button"
+                            onClick={() => handleOpenResubmit(entry)}
+                            className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold bg-violet-600 hover:bg-violet-500 text-white transition shadow"
+                          >
+                            <RotateCcw className="w-3 h-3" />
+                            <span>{t("entry.resubmit")}</span>
+                          </button>
+                        )}
+                      </div>
+                    )}
                   </div>
                 </div>
               );
@@ -133,6 +175,43 @@ export function TailorEntryView({ tailor, entries, lots, operations }: TailorEnt
           </div>
         )}
       </div>
+
+      {/* Resubmit Modal */}
+      {resubmittingEntryId && (
+        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="bg-slate-900 border border-slate-800 p-6 rounded-3xl max-w-sm w-full shadow-2xl space-y-4">
+            <h3 className="text-base font-bold text-white">{t("entry.resubmit")}</h3>
+            <div>
+              <label className="block text-xs font-semibold text-slate-400 uppercase mb-1">
+                {t("entry.piecesCount")}
+              </label>
+              <input
+                type="number"
+                min="1"
+                value={resubmitPieces}
+                onChange={(e) => setResubmitPieces(parseInt(e.target.value) || 0)}
+                className="w-full h-11 px-3 rounded-xl bg-slate-950 text-white font-bold text-base border border-slate-800"
+              />
+            </div>
+            <div className="flex items-center gap-2 pt-2">
+              <button
+                type="button"
+                onClick={() => setResubmittingEntryId(null)}
+                className="flex-1 h-10 rounded-xl bg-slate-800 text-slate-300 font-semibold text-xs"
+              >
+                {t("common.cancel")}
+              </button>
+              <button
+                type="button"
+                onClick={handleConfirmResubmit}
+                className="flex-1 h-10 rounded-xl bg-violet-600 hover:bg-violet-500 text-white font-bold text-xs shadow"
+              >
+                {t("common.submit")}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

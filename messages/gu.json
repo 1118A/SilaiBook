@@ -43,7 +43,7 @@
     "tailors": "દરજીઓ",
     "lots": "લોટ",
     "operations": "ઓપરેશન",
-    "salary": "પગાર",
+    "salary": "પગાર એન્જિન",
     "settings": "સેટિંગ્સ"
   },
   "entry": {
@@ -87,6 +87,28 @@
     "bulkVerifiedSuccess": "આ ગ્રુપની બધી એન્ટ્રીઝ વેરિફાઇ થઈ ગઈ",
     "auditTrailTitle": "ઓડિટ ટ્રેઇલ હિસ્ટ્રી",
     "onlyVerifiedCountInSalary": "નોંધ: માત્ર વેરિફાઇડ એન્ટ્રીઝ જ પગારમાં ગણાશે."
+  },
+  "salary": {
+    "title": "માસિક પગાર એન્જિન",
+    "selectMonth": "પગારનો મહિનો પસંદ કરો",
+    "totalGross": "કુલ ગ્રોસ કમાણી",
+    "totalNet": "કુલ ચૂકવવાપાત્ર પગાર",
+    "grossSalary": "ગ્રોસ કમાણી",
+    "bonus": "બોનસ (+)",
+    "advance": "ઉપાડ / ઉપાડ રકમ (−)",
+    "deduction": "કપાત (−)",
+    "netPayable": "ચૂકવવાપાત્ર ચોખ્ખો પગાર",
+    "pendingVisibility": "પેન્ડિંગ (પગારમાં સામેલ નથી)",
+    "addAdjustment": "રકમ ઉમેરો/કાપો",
+    "adjustmentType": "પ્રકાર",
+    "amountRupees": "રકમ (₹)",
+    "noteOptional": "નોંધ / વિગત",
+    "closeMonth": "મહિનો બંધ અને લોક કરો",
+    "reopenMonth": "મહિનો ફરીથી ખોલો",
+    "monthLocked": "આ મહિનો બંધ અને લોક થયેલ છે",
+    "downloadCSV": "CSV એક્સપોર્ટ કરો",
+    "printPayslip": "પગાર સ્લિપ પ્રિન્ટ કરો",
+    "negativeNetWarning": "ચેતવણી: ચોખ્ખો પગાર માઇનસમાં છે કારણ કે ઉપાડ ગ્રોસ કરતાં વધુ છે!"
   },
   "lots": {
     "title": "લોટ મેનેજમેન્ટ",
