@@ -139,7 +139,11 @@ export function EntryList({ entries, tailors, lots, operations }: EntryListProps
                             : "bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-300"
                         }`}
                       >
-                        {t(`common.${entry.status}` as any)}
+                        {entry.status === "verified"
+                          ? t("common.verified")
+                          : entry.status === "rejected"
+                          ? t("common.rejected")
+                          : t("common.pending")}
                       </span>
                     </td>
                   </tr>

@@ -76,13 +76,13 @@ export default function HomePage() {
 
           {/* CTA Button */}
           <div className="pt-2">
-            <button
-              className="px-8 py-3.5 rounded-xl bg-gradient-to-r from-violet-600 to-fuchsia-500 text-white font-semibold text-base shadow-lg shadow-violet-500/25 hover:shadow-violet-500/40 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
+            <Link
+              href={`/${locale}/dashboard`}
+              className="inline-block px-8 py-3.5 rounded-xl bg-gradient-to-r from-violet-600 to-fuchsia-500 text-white font-semibold text-base shadow-lg shadow-violet-500/25 hover:shadow-violet-500/40 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
               id="btn-get-started"
-              onClick={() => setShowToast(true)}
             >
-              {t("home.getStarted")}
-            </button>
+              🚀 {t("home.getStarted")}
+            </Link>
           </div>
         </div>
 

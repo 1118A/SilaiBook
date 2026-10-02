@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Tailor, Lot, Operation, PieceEntry, LotProgress } from "@/lib/types/payroll";
 import { multiplyPaise } from "@/lib/money";
 
