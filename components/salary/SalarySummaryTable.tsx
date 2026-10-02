@@ -12,8 +12,6 @@ import {
   AlertTriangle,
   Eye,
   Calendar,
-  Layers,
-  TrendingUp,
 } from "lucide-react";
 import { Tailor, PieceEntry, Adjustment, Lot, Operation, AdjustmentType } from "@/lib/types/payroll";
 import { calculateMonthlySalary, TailorMonthlySalary } from "@/lib/salary/engine";

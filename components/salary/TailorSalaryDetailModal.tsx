@@ -1,7 +1,6 @@
 "use client";
 
-import { useTranslations } from "next-intl";
-import { X, Calendar, Layers, Scissors, FileText } from "lucide-react";
+import { X, Calendar, Scissors, FileText } from "lucide-react";
 import { PieceEntry, Adjustment, Lot, Operation } from "@/lib/types/payroll";
 import { formatINR, multiplyPaise } from "@/lib/money";
 
@@ -24,7 +23,6 @@ export function TailorSalaryDetailModal({
   operations,
   onClose,
 }: TailorSalaryDetailModalProps) {
-  const t = useTranslations();
 
   return (
     <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">

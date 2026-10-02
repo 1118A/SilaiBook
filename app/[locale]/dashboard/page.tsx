@@ -15,6 +15,7 @@ import {
   Globe,
   ShieldCheck,
   History,
+  DollarSign,
 } from "lucide-react";
 import { usePayrollStore } from "@/lib/store/payroll-store";
 import { QuickEntryForm } from "@/components/entry/QuickEntryForm";
@@ -22,6 +23,7 @@ import { TailorEntryView } from "@/components/entry/TailorEntryView";
 import { EntryList } from "@/components/entry/EntryList";
 import { VerificationInbox } from "@/components/verification/VerificationInbox";
 import { AuditLogView } from "@/components/verification/AuditLogView";
+import { SalarySummaryTable } from "@/components/salary/SalarySummaryTable";
 import { LotManagement } from "@/components/lots/LotManagement";
 import { TailorManagement } from "@/components/management/TailorManagement";
 import { OperationManagement } from "@/components/management/OperationManagement";
@@ -36,10 +38,15 @@ export default function DashboardPage() {
     lots,
     operations,
     entries,
+    adjustments,
     auditLogs,
     autoVerifyManager,
     setAutoVerifyManager,
     lastEntry,
+    isMonthClosed,
+    closeMonth,
+    reopenMonth,
+    addAdjustment,
     getLotProgress,
     addEntry,
     verifyEntry,
@@ -53,7 +60,7 @@ export default function DashboardPage() {
     addOperation,
   } = usePayrollStore();
 
-  const [activeTab, setActiveTab] = useState<"quickEntry" | "verification" | "tailorView" | "entries" | "lots" | "audit" | "manage">("verification");
+  const [activeTab, setActiveTab] = useState<"salary" | "verification" | "quickEntry" | "tailorView" | "entries" | "lots" | "audit" | "manage">("salary");
   const [selectedTailorForView, setSelectedTailorForView] = useState<string>(tailors[0]?.id || "");
 
   const activeTailors = tailors.filter((t) => t.active);
@@ -104,6 +111,18 @@ export default function DashboardPage() {
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-8 py-6 space-y-6">
         {/* Navigation Tabs */}
         <div className="flex items-center gap-2 overflow-x-auto pb-2 border-b border-slate-800/80">
+          <button
+            onClick={() => setActiveTab("salary")}
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-semibold text-xs sm:text-sm whitespace-nowrap transition ${
+              activeTab === "salary"
+                ? "bg-violet-600 text-white shadow-md shadow-violet-600/20"
+                : "bg-slate-900/60 text-slate-400 hover:text-slate-200 hover:bg-slate-900 border border-slate-800"
+            }`}
+          >
+            <DollarSign className="w-4 h-4 text-emerald-400" />
+            <span>{t("nav.salary")}</span>
+          </button>
+
           <button
             onClick={() => setActiveTab("verification")}
             className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-semibold text-xs sm:text-sm whitespace-nowrap transition ${
@@ -195,6 +214,20 @@ export default function DashboardPage() {
         </div>
 
         {/* Tab Content */}
+        {activeTab === "salary" && (
+          <SalarySummaryTable
+            tailors={tailors}
+            entries={entries}
+            adjustments={adjustments}
+            lots={lots}
+            operations={operations}
+            isMonthClosed={isMonthClosed("2026-09")}
+            onAddAdjustment={addAdjustment}
+            onCloseMonth={closeMonth}
+            onReopenMonth={reopenMonth}
+          />
+        )}
+
         {activeTab === "verification" && (
           <VerificationInbox
             entries={entries}
