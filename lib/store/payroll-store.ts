@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Tailor, Lot, Operation, PieceEntry, LotProgress, AuditLog } from "@/lib/types/payroll";
+import { Tailor, Lot, Operation, PieceEntry, Adjustment, LotProgress, AuditLog, AdjustmentType } from "@/lib/types/payroll";
 import { multiplyPaise } from "@/lib/money";
 
 const UNIT_ID = "a0000000-0000-0000-0000-000000000001";
@@ -40,6 +40,11 @@ const initialEntries: PieceEntry[] = [
   { id: "e105", unit_id: UNIT_ID, tailor_id: "b0000000-0000-0000-0000-000000000003", lot_id: "c0000000-0000-0000-0000-000000000003", operation_id: "d0000000-0000-0000-0000-000000000001", work_date: new Date().toISOString().split("T")[0], pieces: 15, rate_paise: 300, status: "rejected", note: "Count mismatch - recount required", created_at: new Date().toISOString() },
 ];
 
+const initialAdjustments: Adjustment[] = [
+  { id: "adj1", unit_id: UNIT_ID, tailor_id: "b0000000-0000-0000-0000-000000000001", month: "2026-09-01", type: "bonus", amount_paise: 50000, note: "Festival bonus", created_at: "2026-09-01T00:00:00Z" },
+  { id: "adj2", unit_id: UNIT_ID, tailor_id: "b0000000-0000-0000-0000-000000000002", month: "2026-09-01", type: "advance", amount_paise: 200000, note: "Salary advance", created_at: "2026-09-01T00:00:00Z" },
+];
+
 const initialAuditLogs: AuditLog[] = [
   { id: "a1", unit_id: UNIT_ID, user_id: MANAGER_USER_ID, action: "VERIFY_ENTRY", table_name: "entries", record_id: "e101", old_data: { status: "pending" }, new_data: { status: "verified" }, created_at: "2026-09-01T18:00:00Z" },
   { id: "a2", unit_id: UNIT_ID, user_id: MANAGER_USER_ID, action: "VERIFY_ENTRY", table_name: "entries", record_id: "e102", old_data: { status: "pending" }, new_data: { status: "verified" }, created_at: "2026-09-02T18:00:00Z" },
@@ -51,6 +56,8 @@ export function usePayrollStore() {
   const [lots, setLots] = useState<Lot[]>(initialLots);
   const [operations, setOperations] = useState<Operation[]>(initialOperations);
   const [entries, setEntries] = useState<PieceEntry[]>(initialEntries);
+  const [adjustments, setAdjustments] = useState<Adjustment[]>(initialAdjustments);
+  const [closedMonths, setClosedMonths] = useState<string[]>([]);
   const [auditLogs, setAuditLogs] = useState<AuditLog[]>(initialAuditLogs);
   const [autoVerifyManager, setAutoVerifyManager] = useState<boolean>(true);
   const [lastEntry, setLastEntry] = useState<Partial<PieceEntry> | null>(null);
@@ -70,11 +77,46 @@ export function usePayrollStore() {
     setAuditLogs((prev) => [log, ...prev]);
   };
 
+  const isMonthClosed = (monthStr: string) => {
+    const yyyymm = monthStr.substring(0, 7);
+    return closedMonths.includes(yyyymm);
+  };
+
+  const closeMonth = (monthStr: string) => {
+    const yyyymm = monthStr.substring(0, 7);
+    if (!closedMonths.includes(yyyymm)) {
+      setClosedMonths((prev) => [...prev, yyyymm]);
+      addAuditRecord("CLOSE_MONTH", yyyymm, undefined, { locked: true });
+    }
+  };
+
+  const reopenMonth = (monthStr: string) => {
+    const yyyymm = monthStr.substring(0, 7);
+    setClosedMonths((prev) => prev.filter((m) => m !== yyyymm));
+    addAuditRecord("REOPEN_MONTH", yyyymm, { locked: true }, { locked: false });
+  };
+
+  const addAdjustment = (adjData: { tailor_id: string; month: string; type: AdjustmentType; amount_paise: number; note?: string }) => {
+    const newAdj: Adjustment = {
+      id: "adj_" + Date.now(),
+      unit_id: UNIT_ID,
+      tailor_id: adjData.tailor_id,
+      month: adjData.month,
+      type: adjData.type,
+      amount_paise: adjData.amount_paise,
+      note: adjData.note,
+      created_by: MANAGER_USER_ID,
+      created_at: new Date().toISOString(),
+    };
+    setAdjustments((prev) => [newAdj, ...prev]);
+    addAuditRecord("ADD_ADJUSTMENT", newAdj.id, undefined, { type: adjData.type, amount: adjData.amount_paise });
+    return newAdj;
+  };
+
   const getLotProgress = (lotId: string): LotProgress | null => {
     const lot = lots.find((l) => l.id === lotId);
     if (!lot) return null;
 
-    // Only non-rejected entries count toward completion
     const lotEntries = entries.filter((e) => e.lot_id === lotId && e.status !== "rejected");
     const done_pieces = lotEntries.reduce((acc, curr) => acc + curr.pieces, 0);
     const remaining_pieces = Math.max(0, lot.total_pieces - done_pieces);
@@ -245,25 +287,22 @@ export function usePayrollStore() {
     return newOp;
   };
 
-  /**
-   * CORE RULE #2 & #3: Only VERIFIED entries count in salary.
-   */
-  const calculateVerifiedSalaryPaise = (tailorId?: string): number => {
-    return entries
-      .filter((e) => e.status === "verified" && (!tailorId || e.tailor_id === tailorId))
-      .reduce((acc, curr) => acc + multiplyPaise(curr.rate_paise, curr.pieces), 0);
-  };
-
   return {
     unitId: UNIT_ID,
     tailors,
     lots,
     operations,
     entries,
+    adjustments,
+    closedMonths,
     auditLogs,
     autoVerifyManager,
     setAutoVerifyManager,
     lastEntry,
+    isMonthClosed,
+    closeMonth,
+    reopenMonth,
+    addAdjustment,
     getLotProgress,
     addEntry,
     verifyEntry,
@@ -275,7 +314,6 @@ export function usePayrollStore() {
     addTailor,
     toggleTailorActive,
     addOperation,
-    calculateVerifiedSalaryPaise,
   };
 }
 
