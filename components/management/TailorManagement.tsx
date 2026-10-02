@@ -24,7 +24,7 @@ export function TailorManagement({ tailors, onAddTailor, onToggleActive }: Tailo
 
     const validation = tailorSchema.safeParse({ name, phone });
     if (!validation.success) {
-      setErrorMsg(t(validation.error.issues[0]?.message as any));
+      setErrorMsg(t(validation.error.issues[0]?.message as "validation.nameRequired"));
       return;
     }
 

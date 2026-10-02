@@ -59,7 +59,7 @@ export function QuickEntryForm({ tailors, lots, operations, lastEntry, onSave }:
 
     if (!validation.success) {
       const firstIssue = validation.error.issues[0];
-      const translatedError = firstIssue ? t(firstIssue.message as any) : "Invalid input";
+      const translatedError = firstIssue ? t(firstIssue.message as "validation.piecesPositive") : "Invalid input";
       setErrorMsg(translatedError);
       return;
     }
