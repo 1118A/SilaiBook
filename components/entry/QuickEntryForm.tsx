@@ -86,6 +86,13 @@ export function QuickEntryForm({ tailors, lots, operations, lastEntry, onSave }:
     }
 
     onSave(payload);
+    if (typeof window !== "undefined" && typeof navigator !== "undefined" && "vibrate" in navigator) {
+      try {
+        navigator.vibrate([30]);
+      } catch {
+        // ignore
+      }
+    }
     setSuccessMsg(t("entry.entrySavedSuccess"));
     setPieces(10);
     setTimeout(() => setSuccessMsg(null), 3000);
@@ -99,6 +106,13 @@ export function QuickEntryForm({ tailors, lots, operations, lastEntry, onSave }:
     if (lastEntry.rate_paise !== undefined) setRateRupees(fromPaise(lastEntry.rate_paise));
     if (lastEntry.pieces !== undefined) setPieces(lastEntry.pieces);
 
+    if (typeof window !== "undefined" && typeof navigator !== "undefined" && "vibrate" in navigator) {
+      try {
+        navigator.vibrate([15]);
+      } catch {
+        // ignore
+      }
+    }
     setSuccessMsg(t("entry.lastEntryRepeated"));
     setTimeout(() => setSuccessMsg(null), 3000);
   };

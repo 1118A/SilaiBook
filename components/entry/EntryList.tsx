@@ -29,6 +29,7 @@ export function EntryList({ entries, tailors, lots, operations }: EntryListProps
   const [selectedLotId, setSelectedLotId] = useState<string>("all");
   const [selectedStatus, setSelectedStatus] = useState<string>("all");
   const [searchDate, setSearchDate] = useState<string>("");
+  const [visibleCount, setVisibleCount] = useState<number>(25);
 
   const filteredEntries = entries.filter((entry) => {
     // Strict Tailor Data Isolation: If tailor, enforce own entries only!
@@ -39,6 +40,8 @@ export function EntryList({ entries, tailors, lots, operations }: EntryListProps
     if (searchDate && entry.work_date !== searchDate) return false;
     return true;
   });
+
+  const displayedEntries = filteredEntries.slice(0, visibleCount);
 
   return (
     <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-6">
@@ -135,7 +138,7 @@ export function EntryList({ entries, tailors, lots, operations }: EntryListProps
                 </td>
               </tr>
             ) : (
-              filteredEntries.map((entry) => {
+              displayedEntries.map((entry) => {
                 const tailor = tailors.find((t) => t.id === entry.tailor_id);
                 const lot = lots.find((l) => l.id === entry.lot_id);
                 const op = operations.find((o) => o.id === entry.operation_id);
@@ -185,6 +188,18 @@ export function EntryList({ entries, tailors, lots, operations }: EntryListProps
           </tbody>
         </table>
       </div>
+
+      {filteredEntries.length > displayedEntries.length && (
+        <div className="flex justify-center pt-2">
+          <button
+            type="button"
+            onClick={() => setVisibleCount((prev) => prev + 25)}
+            className="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-xs font-bold rounded-xl transition shadow-sm"
+          >
+            Load More Entries ({filteredEntries.length - displayedEntries.length} remaining)
+          </button>
+        </div>
+      )}
     </div>
   );
 }

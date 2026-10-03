@@ -27,7 +27,58 @@ import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { LanguageDropdown } from "@/components/ui/LanguageDropdown";
 import { BrandLogo } from "@/components/ui/BrandLogo";
 import { InstallPromptBanner } from "@/components/pwa/InstallPromptBanner";
-import { ReportExporterModal } from "@/components/reports/ReportExporterModal";
+import dynamic from "next/dynamic";
+import { TabLoadingSkeleton } from "@/components/ui/TabLoadingSkeleton";
+
+const ReportExporterModal = dynamic(
+  () => import("@/components/reports/ReportExporterModal").then((m) => m.ReportExporterModal),
+  { ssr: false }
+);
+const UserProfileModal = dynamic(
+  () => import("@/components/profile/UserProfileModal").then((m) => m.UserProfileModal),
+  { ssr: false }
+);
+const MainAdminDashboard = dynamic(
+  () => import("@/components/admin/MainAdminDashboard").then((m) => m.MainAdminDashboard),
+  { loading: () => <TabLoadingSkeleton /> }
+);
+const SalarySummaryTable = dynamic(
+  () => import("@/components/salary/SalarySummaryTable").then((m) => m.SalarySummaryTable),
+  { loading: () => <TabLoadingSkeleton /> }
+);
+const LotManagement = dynamic(
+  () => import("@/components/lots/LotManagement").then((m) => m.LotManagement),
+  { loading: () => <TabLoadingSkeleton /> }
+);
+const TailorManagement = dynamic(
+  () => import("@/components/management/TailorManagement").then((m) => m.TailorManagement),
+  { loading: () => <TabLoadingSkeleton /> }
+);
+const OperationManagement = dynamic(
+  () => import("@/components/management/OperationManagement").then((m) => m.OperationManagement),
+  { loading: () => <TabLoadingSkeleton /> }
+);
+const AuditLogView = dynamic(
+  () => import("@/components/verification/AuditLogView").then((m) => m.AuditLogView),
+  { loading: () => <TabLoadingSkeleton /> }
+);
+const TailorPerformanceView = dynamic(
+  () => import("@/components/analytics/TailorPerformanceView").then((m) => m.TailorPerformanceView),
+  { loading: () => <TabLoadingSkeleton /> }
+);
+const LeaderboardView = dynamic(
+  () => import("@/components/analytics/LeaderboardView").then((m) => m.LeaderboardView),
+  { loading: () => <TabLoadingSkeleton /> }
+);
+const LotAnalyticsView = dynamic(
+  () => import("@/components/analytics/LotAnalyticsView").then((m) => m.LotAnalyticsView),
+  { loading: () => <TabLoadingSkeleton /> }
+);
+const OperationAnalyticsView = dynamic(
+  () => import("@/components/analytics/OperationAnalyticsView").then((m) => m.OperationAnalyticsView),
+  { loading: () => <TabLoadingSkeleton /> }
+);
+
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { useAuth } from "@/lib/context/AuthContext";
 import { useOfflineSync } from "@/lib/offline/useOfflineSync";
@@ -37,25 +88,14 @@ import { QuickEntryForm } from "@/components/entry/QuickEntryForm";
 import { TailorEntryView } from "@/components/entry/TailorEntryView";
 import { EntryList } from "@/components/entry/EntryList";
 import { VerificationInbox } from "@/components/verification/VerificationInbox";
-import { AuditLogView } from "@/components/verification/AuditLogView";
-import { SalarySummaryTable } from "@/components/salary/SalarySummaryTable";
-import { LotManagement } from "@/components/lots/LotManagement";
-import { TailorManagement } from "@/components/management/TailorManagement";
-import { OperationManagement } from "@/components/management/OperationManagement";
 import { AnalyticsKPICards } from "@/components/analytics/AnalyticsKPICards";
-import { TailorPerformanceView } from "@/components/analytics/TailorPerformanceView";
-import { LeaderboardView } from "@/components/analytics/LeaderboardView";
-import { LotAnalyticsView } from "@/components/analytics/LotAnalyticsView";
-import { OperationAnalyticsView } from "@/components/analytics/OperationAnalyticsView";
 import {
   getOverallAnalytics,
   getTailorAnalytics,
   getLotAnalytics,
   getOperationAnalytics,
 } from "@/lib/analytics/engine";
-import { MainAdminDashboard } from "@/components/admin/MainAdminDashboard";
 import { AccessDeniedCard } from "@/components/auth/AccessDeniedCard";
-import { UserProfileModal } from "@/components/profile/UserProfileModal";
 import { canAccessSection, SectionKey, getRoleBadgeInfo } from "@/lib/auth/permissions";
 
 type TabType = "mainAdmin" | "salary" | "analytics" | "verification" | "quickEntry" | "tailorView" | "entries" | "lots" | "audit" | "manage";
