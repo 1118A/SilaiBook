@@ -106,8 +106,8 @@ export default function SignUpPage() {
                 <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
                   {t("auth.role")}
                 </label>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                  {(["main_admin", "owner", "manager", "tailor"] as Role[]).map((r) => (
+                <div className="grid grid-cols-3 gap-2">
+                  {(["owner", "manager", "tailor"] as Role[]).map((r) => (
                     <button
                       key={r}
                       type="button"
@@ -118,7 +118,7 @@ export default function SignUpPage() {
                           : "border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"
                       }`}
                     >
-                      {t(`auth.${r === "main_admin" ? "mainAdmin" : r}`)}
+                      {t(`auth.${r}`)}
                     </button>
                   ))}
                 </div>
