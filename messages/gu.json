@@ -71,7 +71,14 @@
     "filterByLot": "લોટ ફિલ્ટર",
     "filterByStatus": "સ્થિતિ ફિલ્ટર",
     "rejectionReason": "નામંજૂર કરવાનું કારણ",
-    "resubmit": "ફરીથી એન્ટ્રી મોકલો"
+    "resubmit": "ફરીથી એન્ટ્રી મોકલો",
+    "scanBundleQR": "બંડલ QR સ્કેન કરો",
+    "cameraScannerTitle": "બંડલ ટિકિટ સ્કેનર",
+    "cameraScannerDesc": "બંડલ ટિકિટ (પલ્લા ચિઠ્ઠી) QR કોડ તરફ કેમેરો રાખો.",
+    "cameraPermissionNotice": "QR ટિકિટ સ્કેન કરવા માટે કેમેરાની પરવાનગી જરૂરી છે.",
+    "bundleScannedSuccess": "બંડલ ટિકિટ સ્કેન થઈ! લોટ અને પીસ આપમેળે ભરાઈ ગયા.",
+    "quickTestSamples": "ડેમો બંડલ ટિકિટો:",
+    "closeScanner": "સ્કેનર બંધ કરો"
   },
   "verification": {
     "inboxTitle": "ચકાસણી ઇનબોક્સ",
@@ -142,7 +149,10 @@
     "progress": "પ્રગતિ",
     "status": "સ્થિતિ",
     "lotCreatedSuccess": "લોટ સફળતાપૂર્વક ઉમેરાયો!",
-    "archiveConfirm": "શું તમે ખરેખર આ લોટને આર્કાઇવ કરવા માંગો છો?"
+    "archiveConfirm": "શું તમે ખરેખર આ લોટને આર્કાઇવ કરવા માંગો છો?",
+    "viewBundleQR": "બંડલ QR ટિકિટ",
+    "bundleTicketTitle": "ગારમેન્ટ બંડલ ટિકિટ (પલ્લા ચિઠ્ઠી)",
+    "printTicket": "ટિકિટ પ્રિન્ટ કરો"
   },
   "tailors": {
     "title": "દરજી યાદી",

@@ -71,7 +71,14 @@
     "filterByLot": "Filter Lot",
     "filterByStatus": "Filter Status",
     "rejectionReason": "Rejection Reason",
-    "resubmit": "Resubmit Entry"
+    "resubmit": "Resubmit Entry",
+    "scanBundleQR": "Scan Bundle QR",
+    "cameraScannerTitle": "Bundle Ticket Scanner",
+    "cameraScannerDesc": "Point camera at the bundle ticket (Palla Chit) QR code.",
+    "cameraPermissionNotice": "Camera permission is needed to scan QR tickets.",
+    "bundleScannedSuccess": "Bundle ticket scanned! Lot & pieces auto-filled.",
+    "quickTestSamples": "Quick Demo Bundle Tickets:",
+    "closeScanner": "Close Scanner"
   },
   "verification": {
     "inboxTitle": "Verification Inbox",
@@ -142,7 +149,10 @@
     "progress": "Completion",
     "status": "Status",
     "lotCreatedSuccess": "Lot created successfully!",
-    "archiveConfirm": "Are you sure you want to archive this lot?"
+    "archiveConfirm": "Are you sure you want to archive this lot?",
+    "viewBundleQR": "Bundle QR Ticket",
+    "bundleTicketTitle": "Garment Bundle Ticket (Palla Chit)",
+    "printTicket": "Print Ticket"
   },
   "tailors": {
     "title": "Tailor Directory",

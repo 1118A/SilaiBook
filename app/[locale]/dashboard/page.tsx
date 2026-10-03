@@ -484,6 +484,7 @@ function DashboardContent() {
                 getLotProgress={getLotProgress}
                 onAddLot={addLot}
                 onToggleStatus={toggleLotStatus}
+                operations={operations}
               />
             )}
 

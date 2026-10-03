@@ -3,20 +3,23 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { Package, Plus, X } from "lucide-react";
-import { Lot, LotProgress } from "@/lib/types/payroll";
+import { Lot, LotProgress, Operation } from "@/lib/types/payroll";
 import { LotProgressCard } from "./LotProgressCard";
 import { lotSchema } from "@/lib/validations/entry";
+import { BundleTicketModal } from "./BundleTicketModal";
 
 interface LotManagementProps {
   lots: Lot[];
   getLotProgress: (lotId: string) => LotProgress | null;
   onAddLot: (lotData: { lot_no: string; style: string; total_pieces: number }) => void;
   onToggleStatus: (lotId: string, status: Lot["status"]) => void;
+  operations?: Operation[];
 }
 
-export function LotManagement({ lots, getLotProgress, onAddLot, onToggleStatus }: LotManagementProps) {
+export function LotManagement({ lots, getLotProgress, onAddLot, onToggleStatus, operations = [] }: LotManagementProps) {
   const t = useTranslations();
   const [showAddForm, setShowAddForm] = useState(false);
+  const [selectedLotForTicket, setSelectedLotForTicket] = useState<Lot | null>(null);
   const [lotNo, setLotNo] = useState("");
   const [style, setStyle] = useState("");
   const [totalPieces, setTotalPieces] = useState<number>(100);
@@ -127,10 +130,19 @@ export function LotManagement({ lots, getLotProgress, onAddLot, onToggleStatus }
               key={lot.id}
               progress={progress}
               onArchiveToggle={onToggleStatus}
+              onViewTicket={(l) => setSelectedLotForTicket(l)}
             />
           );
         })}
       </div>
+
+      {/* Printable Garment Bundle QR Ticket Modal */}
+      <BundleTicketModal
+        isOpen={!!selectedLotForTicket}
+        onClose={() => setSelectedLotForTicket(null)}
+        lot={selectedLotForTicket}
+        operations={operations}
+      />
     </div>
   );
 }

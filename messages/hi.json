@@ -71,7 +71,14 @@
     "filterByLot": "लॉट फ़िल्टर",
     "filterByStatus": "स्थिति फ़िल्टर",
     "rejectionReason": "अस्वीकृति का कारण",
-    "resubmit": "पुनः एंट्री भेजें"
+    "resubmit": "पुनः एंट्री भेजें",
+    "scanBundleQR": "बंडल QR स्कैन करें",
+    "cameraScannerTitle": "बंडल टिकट स्कैनर",
+    "cameraScannerDesc": "बंडल टिकट (पल्ला चिट्ठी) QR कोड की ओर कैमरा रखें।",
+    "cameraPermissionNotice": "QR टिकट स्कैन करने के लिए कैमरा अनुमति आवश्यक है।",
+    "bundleScannedSuccess": "बंडल टिकट स्कैन हो गया! लॉट और पीस स्वतः भर गए।",
+    "quickTestSamples": "डेमो बंडल टिकटें:",
+    "closeScanner": "स्कैनर बंद करें"
   },
   "verification": {
     "inboxTitle": "सत्यापन इनबॉक्स",
@@ -142,7 +149,10 @@
     "progress": "प्रगति",
     "status": "स्थिति",
     "lotCreatedSuccess": "लॉट सफलतापूर्वक जोड़ा गया!",
-    "archiveConfirm": "क्या आप वाकई इस लॉट को आर्काइव करना चाहते हैं?"
+    "archiveConfirm": "क्या आप वाकई इस लॉट को आर्काइव करना चाहते हैं?",
+    "viewBundleQR": "बंडल QR टिकट",
+    "bundleTicketTitle": "गारमेंट बंडल टिकट (पल्ला चिट्ठी)",
+    "printTicket": "टिकट प्रिंट करें"
   },
   "tailors": {
     "title": "दर्जी सूची",

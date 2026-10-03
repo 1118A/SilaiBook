@@ -14,11 +14,13 @@ import {
   Scissors,
   Minus,
   Plus,
+  Camera,
 } from "lucide-react";
 import { Tailor, Lot, Operation, PieceEntry } from "@/lib/types/payroll";
 import { formatINR, fromPaise, toPaise, multiplyPaise } from "@/lib/money";
 import { pieceEntrySchema } from "@/lib/validations/entry";
 import { useAuth } from "@/lib/context/AuthContext";
+import { BundleBarcodeScannerModal, ScannedBundleData } from "@/components/entry/BundleBarcodeScannerModal";
 
 interface QuickEntryFormProps {
   tailors: Tailor[];
@@ -50,6 +52,20 @@ export function QuickEntryForm({ tailors, lots, operations, lastEntry, onSave }:
   const [workDate, setWorkDate] = useState<string>(new Date().toISOString().split("T")[0]);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
+
+  const [isScannerOpen, setIsScannerOpen] = useState(false);
+
+  const handleScanSuccess = (data: ScannedBundleData) => {
+    setLotId(data.lotId);
+    if (data.pieces) {
+      setPieces(data.pieces);
+    }
+    if (data.operationId) {
+      handleOperationChange(data.operationId);
+    }
+    setSuccessMsg(t("entry.bundleScannedSuccess"));
+    setTimeout(() => setSuccessMsg(null), 4000);
+  };
 
   const handleOperationChange = (opId: string) => {
     setOperationId(opId);
@@ -135,16 +151,27 @@ export function QuickEntryForm({ tailors, lots, operations, lastEntry, onSave }:
           </div>
         </div>
 
-        {lastEntry && (
+        <div className="flex items-center gap-2">
           <button
             type="button"
-            onClick={handleRepeatLast}
-            className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-extrabold bg-white/15 hover:bg-white/25 text-white backdrop-blur-md transition shadow-sm border border-white/10"
+            onClick={() => setIsScannerOpen(true)}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-black bg-amber-400 hover:bg-amber-300 text-slate-950 transition shadow-md shrink-0 cursor-pointer"
           >
-            <RotateCcw className="w-3.5 h-3.5" />
-            <span>Repeat</span>
+            <Camera className="w-3.5 h-3.5" />
+            <span>{t("entry.scanBundleQR")}</span>
           </button>
-        )}
+
+          {lastEntry && (
+            <button
+              type="button"
+              onClick={handleRepeatLast}
+              className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-extrabold bg-white/15 hover:bg-white/25 text-white backdrop-blur-md transition shadow-sm border border-white/10"
+            >
+              <RotateCcw className="w-3.5 h-3.5" />
+              <span>Repeat</span>
+            </button>
+          )}
+        </div>
       </div>
 
       {errorMsg && (
@@ -321,6 +348,15 @@ export function QuickEntryForm({ tailors, lots, operations, lastEntry, onSave }:
           <span>{t("entry.saveEntry")}</span>
         </button>
       </form>
+
+      {/* Camera QR & Barcode Bundle Scanner Modal */}
+      <BundleBarcodeScannerModal
+        isOpen={isScannerOpen}
+        onClose={() => setIsScannerOpen(false)}
+        lots={lots}
+        operations={operations}
+        onScanSuccess={handleScanSuccess}
+      />
     </div>
   );
 }

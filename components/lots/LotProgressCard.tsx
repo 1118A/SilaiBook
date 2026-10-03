@@ -1,15 +1,20 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Package, RotateCcw, Archive } from "lucide-react";
-import { LotProgress } from "@/lib/types/payroll";
+import { Package, RotateCcw, Archive, QrCode } from "lucide-react";
+import { LotProgress, Lot } from "@/lib/types/payroll";
 
 interface LotProgressCardProps {
   progress: LotProgress;
   onArchiveToggle?: (lotId: string, status: "active" | "completed" | "cancelled") => void;
+  onViewTicket?: (lot: Lot) => void;
 }
 
-export function LotProgressCard({ progress, onArchiveToggle }: LotProgressCardProps) {
+export function LotProgressCard({
+  progress,
+  onArchiveToggle,
+  onViewTicket,
+}: LotProgressCardProps) {
   const t = useTranslations();
   const { lot, done_pieces, remaining_pieces, percentage } = progress;
 
@@ -24,31 +29,44 @@ export function LotProgressCard({ progress, onArchiveToggle }: LotProgressCardPr
           <h3 className="text-xl font-bold text-slate-900 dark:text-white mt-2">{lot.style}</h3>
         </div>
 
-        {onArchiveToggle && (
-          <button
-            type="button"
-            onClick={() =>
-              onArchiveToggle(lot.id, lot.status === "active" ? "completed" : "active")
-            }
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition border ${
-              lot.status === "active"
-                ? "bg-amber-100 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800/50 hover:bg-amber-200 dark:hover:bg-amber-900/60"
-                : "bg-emerald-100 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800/50 hover:bg-emerald-200 dark:hover:bg-emerald-900/60"
-            }`}
-          >
-            {lot.status === "active" ? (
-              <>
-                <Archive className="w-3.5 h-3.5" />
-                <span>{t("common.archive")}</span>
-              </>
-            ) : (
-              <>
-                <RotateCcw className="w-3.5 h-3.5" />
-                <span>Reactivate</span>
-              </>
-            )}
-          </button>
-        )}
+        <div className="flex items-center gap-1.5 flex-wrap justify-end">
+          {onViewTicket && (
+            <button
+              type="button"
+              onClick={() => onViewTicket(lot)}
+              className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-bold transition border border-purple-200 dark:border-purple-800 bg-purple-50 dark:bg-purple-950/40 text-purple-700 dark:text-purple-300 hover:bg-purple-100 dark:hover:bg-purple-900/60"
+            >
+              <QrCode className="w-3.5 h-3.5" />
+              <span>{t("lots.viewBundleQR")}</span>
+            </button>
+          )}
+
+          {onArchiveToggle && (
+            <button
+              type="button"
+              onClick={() =>
+                onArchiveToggle(lot.id, lot.status === "active" ? "completed" : "active")
+              }
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition border ${
+                lot.status === "active"
+                  ? "bg-amber-100 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800/50 hover:bg-amber-200 dark:hover:bg-amber-900/60"
+                  : "bg-emerald-100 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800/50 hover:bg-emerald-200 dark:hover:bg-emerald-900/60"
+              }`}
+            >
+              {lot.status === "active" ? (
+                <>
+                  <Archive className="w-3.5 h-3.5" />
+                  <span>{t("common.archive")}</span>
+                </>
+              ) : (
+                <>
+                  <RotateCcw className="w-3.5 h-3.5" />
+                  <span>Reactivate</span>
+                </>
+              )}
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Progress Bar */}
