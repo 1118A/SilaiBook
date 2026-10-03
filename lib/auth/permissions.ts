@@ -120,6 +120,30 @@ export const ROLE_PERMISSIONS: Record<Role, PermissionDefinition> = {
     canAccessAllUnits: false,
     canManageUsers: false,
   },
+  global_user: {
+    sections: ["main_admin_overview"],
+    canVerifyEntries: false,
+    canRejectEntries: false,
+    canManageRates: false,
+    canManageTailors: false,
+    canManageLots: false,
+    canCloseMonth: false,
+    canManageAdjustments: false,
+    canAccessAllUnits: false,
+    canManageUsers: false,
+  },
+  access_auditor: {
+    sections: ["audit_log"],
+    canVerifyEntries: false,
+    canRejectEntries: false,
+    canManageRates: false,
+    canManageTailors: false,
+    canManageLots: false,
+    canCloseMonth: false,
+    canManageAdjustments: false,
+    canAccessAllUnits: false,
+    canManageUsers: false,
+  },
 };
 
 /**
@@ -152,9 +176,42 @@ export function getDefaultSection(role: Role): SectionKey {
       return "verification_inbox";
     case "tailor":
       return "quick_entry";
+    case "access_auditor":
+      return "audit_log";
+    case "global_user":
     default:
       return "quick_entry";
   }
+}
+
+/**
+ * Security Assertion: Verifies if a role has full platform administrative permissions.
+ * STRICT ENFORCEMENT: 'global_user' and 'access_auditor' are explicitly blocked.
+ */
+export function isFullAdmin(role: Role): boolean {
+  return role === "main_admin";
+}
+
+/**
+ * Security Assertion: Strictly blocks non-administrative roles (including Global User
+ * and Access Auditor) from obtaining or inheriting administrative rights.
+ */
+export function isBlockedFromAdmin(role: Role): boolean {
+  return role !== "main_admin";
+}
+
+/**
+ * Validates role assignment to prevent privilege escalation.
+ */
+export function canAssignRole(actorRole: Role, targetRole: Role): boolean {
+  if (actorRole !== "main_admin") {
+    return false;
+  }
+  // Prevent arbitrary assignment of privileged roles
+  if (targetRole === "main_admin") {
+    return true;
+  }
+  return targetRole === "owner" || targetRole === "manager" || targetRole === "tailor" || targetRole === "global_user" || targetRole === "access_auditor";
 }
 
 /**
@@ -189,6 +246,20 @@ export function getRoleBadgeInfo(role: Role): { labelKey: string; bgClass: strin
         bgClass: "bg-emerald-100 dark:bg-emerald-950/60",
         textClass: "text-emerald-800 dark:text-emerald-300",
         borderClass: "border-emerald-300 dark:border-emerald-800",
+      };
+    case "global_user":
+      return {
+        labelKey: "auth.globalUser",
+        bgClass: "bg-cyan-100 dark:bg-cyan-950/60",
+        textClass: "text-cyan-800 dark:text-cyan-300",
+        borderClass: "border-cyan-300 dark:border-cyan-800",
+      };
+    case "access_auditor":
+      return {
+        labelKey: "auth.accessAuditor",
+        bgClass: "bg-slate-200 dark:bg-slate-800",
+        textClass: "text-slate-800 dark:text-slate-200",
+        borderClass: "border-slate-300 dark:border-slate-700",
       };
   }
 }

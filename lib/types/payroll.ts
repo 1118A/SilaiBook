@@ -1,4 +1,4 @@
-export type Role = "main_admin" | "owner" | "manager" | "tailor";
+export type Role = "main_admin" | "owner" | "manager" | "tailor" | "global_user" | "access_auditor";
 export type EntryStatus = "pending" | "verified" | "rejected";
 export type LotStatus = "active" | "completed" | "cancelled";
 export type AdjustmentType = "bonus" | "advance" | "deduction";

@@ -191,6 +191,8 @@
     "owner": "યુનિટ માલિક",
     "manager": "મેનેજર",
     "tailor": "દરજી",
+    "globalUser": "ગ્લોબલ યુઝર",
+    "accessAuditor": "ઍક્સેસ ઓડિટર",
     "email": "ઇમેઇલ અથવા ફોન",
     "password": "પાસવર્ડ",
     "signInButton": "આગળ વધવા સાઇન ઇન કરો",

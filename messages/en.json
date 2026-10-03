@@ -191,6 +191,8 @@
     "owner": "Unit Owner",
     "manager": "Manager",
     "tailor": "Tailor",
+    "globalUser": "Global User",
+    "accessAuditor": "Access Auditor",
     "email": "Email or Phone",
     "password": "Password",
     "signInButton": "Sign In to Continue",

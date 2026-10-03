@@ -9,10 +9,12 @@ import {
   UserX,
   Clock,
   Shield,
+  Lock,
   Filter,
 } from "lucide-react";
 import { RegisteredUser, UserStatus } from "@/lib/auth/userRegistry";
 import { Role } from "@/lib/types/payroll";
+import { isBlockedFromAdmin } from "@/lib/auth/permissions";
 import { formatDate } from "@/lib/format";
 
 interface AdminUserManagementProps {
@@ -144,6 +146,8 @@ export function AdminUserManagement({
                 <option value="owner">{t("auth.owner")}</option>
                 <option value="manager">{t("auth.manager")}</option>
                 <option value="tailor">{t("auth.tailor")}</option>
+                <option value="global_user">{t("auth.globalUser")}</option>
+                <option value="access_auditor">{t("auth.accessAuditor")}</option>
               </select>
             </div>
 
@@ -197,24 +201,50 @@ export function AdminUserManagement({
                       {u.unit_name || "Radhe Krishna Garments"}
                     </td>
                     <td className="py-3.5 px-4">
-                      <select
-                        value={u.role}
-                        onChange={(e) => onUpdateRole(u.id, e.target.value as Role)}
-                        className={`text-[11px] font-bold px-2 py-1 rounded-lg border focus:outline-none transition ${
-                          u.role === "main_admin"
-                            ? "bg-purple-100 dark:bg-purple-950/60 text-purple-800 dark:text-purple-300 border-purple-300 dark:border-purple-800"
-                            : u.role === "owner"
-                            ? "bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border-amber-300 dark:border-amber-800"
-                            : u.role === "manager"
-                            ? "bg-indigo-100 dark:bg-indigo-950/60 text-indigo-800 dark:text-indigo-300 border-indigo-300 dark:border-indigo-800"
-                            : "bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border-emerald-300 dark:border-emerald-800"
-                        }`}
-                      >
-                        <option value="main_admin">{t("auth.mainAdmin")}</option>
-                        <option value="owner">{t("auth.owner")}</option>
-                        <option value="manager">{t("auth.manager")}</option>
-                        <option value="tailor">{t("auth.tailor")}</option>
-                      </select>
+                      <div className="space-y-1">
+                        <select
+                          value={u.role}
+                          onChange={(e) => {
+                            const newRole = e.target.value as Role;
+                            // Strict RBAC Enforcement: Global User and Access Auditor CANNOT be escalated to main_admin
+                            if (newRole === "main_admin" && (u.role === "global_user" || u.role === "access_auditor")) {
+                              alert("Security Violation: Users with 'Global User' or 'Access Auditor' roles are strictly blocked from obtaining administrative permissions.");
+                              return;
+                            }
+                            onUpdateRole(u.id, newRole);
+                          }}
+                          className={`text-[11px] font-bold px-2 py-1 rounded-lg border focus:outline-none transition ${
+                            u.role === "main_admin"
+                              ? "bg-purple-100 dark:bg-purple-950/60 text-purple-800 dark:text-purple-300 border-purple-300 dark:border-purple-800"
+                              : u.role === "owner"
+                              ? "bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border-amber-300 dark:border-amber-800"
+                              : u.role === "manager"
+                              ? "bg-indigo-100 dark:bg-indigo-950/60 text-indigo-800 dark:text-indigo-300 border-indigo-300 dark:border-indigo-800"
+                              : u.role === "global_user"
+                              ? "bg-cyan-100 dark:bg-cyan-950/60 text-cyan-800 dark:text-cyan-300 border-cyan-300 dark:border-cyan-800"
+                              : u.role === "access_auditor"
+                              ? "bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-300 border-slate-300 dark:border-slate-700"
+                              : "bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border-emerald-300 dark:border-emerald-800"
+                          }`}
+                        >
+                          {/* main_admin is only available if user is already main_admin, blocked for global_user and access_auditor */}
+                          {(!isBlockedFromAdmin(u.role) || u.role === "main_admin") && (
+                            <option value="main_admin">{t("auth.mainAdmin")}</option>
+                          )}
+                          <option value="owner">{t("auth.owner")}</option>
+                          <option value="manager">{t("auth.manager")}</option>
+                          <option value="tailor">{t("auth.tailor")}</option>
+                          <option value="global_user">{t("auth.globalUser")}</option>
+                          <option value="access_auditor">{t("auth.accessAuditor")}</option>
+                        </select>
+
+                        {(u.role === "global_user" || u.role === "access_auditor") && (
+                          <div className="flex items-center gap-1 text-[10px] text-amber-600 dark:text-amber-400 font-mono">
+                            <Lock className="w-2.5 h-2.5" />
+                            <span>Admin Blocked</span>
+                          </div>
+                        )}
+                      </div>
                     </td>
                     <td className="py-3.5 px-4 text-center">
                       <span

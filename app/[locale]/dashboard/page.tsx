@@ -166,19 +166,32 @@ function DashboardContent() {
 
   const { isOnline, pendingCount: offlinePendingCount, isSyncing, triggerSync } = useOfflineSync(entries, addEntry);
 
-  const activeTailors = tailors.filter((t) => t.active);
+  // Multi-Tenancy & Data Isolation:
+  // Managers and Unit Owners ONLY view and interact with data in their assigned garment unit.
+  // Main Admin with canAccessAllUnits may view platform-wide or selected unit.
+  const activeUnitId = user?.unit_id || unitId;
+  const isPlatformAdmin = currentRole === "main_admin";
+
+  const facilityTailors = isPlatformAdmin ? tailors : tailors.filter((t) => t.unit_id === activeUnitId);
+  const facilityLots = isPlatformAdmin ? lots : lots.filter((l) => l.unit_id === activeUnitId);
+  const facilityOperations = isPlatformAdmin ? operations : operations.filter((o) => o.unit_id === activeUnitId);
+  const facilityEntries = isPlatformAdmin ? entries : entries.filter((e) => e.unit_id === activeUnitId);
+  const facilityAdjustments = isPlatformAdmin ? adjustments : adjustments.filter((a) => a.unit_id === activeUnitId);
+  const facilityAuditLogs = isPlatformAdmin ? auditLogs : auditLogs.filter((a) => a.unit_id === activeUnitId);
+
+  const activeTailors = facilityTailors.filter((t) => t.active);
   const isTailor = currentRole === "tailor";
   const matchedTailor = isTailor
-    ? tailors.find((t) => t.id === user?.tailor_id || t.name.toLowerCase().includes(user?.name.toLowerCase() || "")) || tailors[0]
+    ? facilityTailors.find((t) => t.id === user?.tailor_id || t.name.toLowerCase().includes(user?.name.toLowerCase() || "")) || facilityTailors[0]
     : undefined;
-  const currentTailor = isTailor ? matchedTailor : (tailors.find((t) => t.id === selectedTailorForView) || tailors[0]);
-  const pendingCount = entries.filter((e) => e.status === "pending").length;
+  const currentTailor = isTailor ? matchedTailor : (facilityTailors.find((t) => t.id === selectedTailorForView) || facilityTailors[0]);
+  const pendingCount = facilityEntries.filter((e) => e.status === "pending").length;
 
-  const salarySummaries = calculateMonthlySalary(tailors, entries, adjustments, "2026-09").tailors;
-  const overallKPIs = getOverallAnalytics(entries, analyticsMonth);
-  const tailorPerformance = getTailorAnalytics(entries, tailors, analyticsMonth);
-  const lotMetrics = getLotAnalytics(entries, lots, tailors);
-  const operationMetrics = getOperationAnalytics(entries, operations);
+  const salarySummaries = calculateMonthlySalary(facilityTailors, facilityEntries, facilityAdjustments, "2026-09").tailors;
+  const overallKPIs = getOverallAnalytics(facilityEntries, analyticsMonth);
+  const tailorPerformance = getTailorAnalytics(facilityEntries, facilityTailors, analyticsMonth);
+  const lotMetrics = getLotAnalytics(facilityEntries, facilityLots, facilityTailors);
+  const operationMetrics = getOperationAnalytics(facilityEntries, facilityOperations);
 
   const allNavItems: { id: TabType; label: string; icon: React.ComponentType<{ className?: string }>; badge?: number }[] = [
     { id: "mainAdmin", label: t("nav.mainAdmin"), icon: ShieldCheck },
@@ -202,6 +215,15 @@ function DashboardContent() {
 
   return (
     <div className="h-screen w-full bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 flex flex-col md:flex-row overflow-hidden font-sans transition-colors duration-200">
+      {/* Mobile Backdrop Overlay */}
+      {isMobileMenuOpen && (
+        <div
+          onClick={() => setIsMobileMenuOpen(false)}
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 md:hidden animate-fade-in"
+          aria-hidden="true"
+        />
+      )}
+
       {/* Mobile Top Navigation Bar */}
       <div className="md:hidden shrink-0 flex items-center justify-between p-4 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 z-40">
         <BrandLogo size="sm" showTagline={false} href={`/${locale}`} />
@@ -230,7 +252,7 @@ function DashboardContent() {
               <BrandLogo size="md" showTagline={true} href={`/${locale}`} />
               <div className="text-[10px] font-semibold text-emerald-600 dark:text-emerald-400 flex items-center gap-1 mt-1 pl-0.5">
                 <Building2 className="w-3 h-3" />
-                <span>Shree Ganesh Garments</span>
+                <span className="truncate max-w-[170px]">{user?.unit_name || "SilaiBook Unit"}</span>
               </div>
             </div>
             {isMobileMenuOpen && (
@@ -411,11 +433,11 @@ function DashboardContent() {
 
             {activeTab === "salary" && (
               <SalarySummaryTable
-                tailors={tailors}
-                entries={entries}
-                adjustments={adjustments}
-                lots={lots}
-                operations={operations}
+                tailors={facilityTailors}
+                entries={facilityEntries}
+                adjustments={facilityAdjustments}
+                lots={facilityLots}
+                operations={facilityOperations}
                 isMonthClosed={isMonthClosed("2026-09")}
                 onAddAdjustment={addAdjustment}
                 onCloseMonth={closeMonth}
@@ -425,10 +447,10 @@ function DashboardContent() {
 
             {activeTab === "verification" && (
               <VerificationInbox
-                entries={entries}
-                tailors={tailors}
-                lots={lots}
-                operations={operations}
+                entries={facilityEntries}
+                tailors={facilityTailors}
+                lots={facilityLots}
+                operations={facilityOperations}
                 autoVerifyManager={autoVerifyManager}
                 onToggleAutoVerify={setAutoVerifyManager}
                 onVerify={verifyEntry}
@@ -440,8 +462,8 @@ function DashboardContent() {
             {activeTab === "quickEntry" && (
               <QuickEntryForm
                 tailors={activeTailors}
-                lots={lots}
-                operations={operations}
+                lots={facilityLots}
+                operations={facilityOperations}
                 lastEntry={lastEntry}
                 onSave={addEntry}
               />
@@ -457,7 +479,7 @@ function DashboardContent() {
                       onChange={(e) => setSelectedTailorForView(e.target.value)}
                       className="px-3 py-1.5 rounded-xl bg-slate-50 dark:bg-slate-800 text-sm font-semibold text-slate-900 dark:text-white border border-slate-200 dark:border-slate-700"
                     >
-                      {tailors.map((tailor) => (
+                      {facilityTailors.map((tailor) => (
                         <option key={tailor.id} value={tailor.id}>
                           {tailor.name}
                         </option>
@@ -469,9 +491,9 @@ function DashboardContent() {
                 {currentTailor && (
                   <TailorEntryView
                     tailor={currentTailor}
-                    entries={entries}
-                    lots={lots}
-                    operations={operations}
+                    entries={facilityEntries}
+                    lots={facilityLots}
+                    operations={facilityOperations}
                     onResubmit={resubmitEntry}
                   />
                 )}
@@ -480,34 +502,34 @@ function DashboardContent() {
 
             {activeTab === "lots" && (
               <LotManagement
-                lots={lots}
+                lots={facilityLots}
                 getLotProgress={getLotProgress}
                 onAddLot={addLot}
                 onToggleStatus={toggleLotStatus}
-                operations={operations}
+                operations={facilityOperations}
               />
             )}
 
             {activeTab === "entries" && (
               <EntryList
-                entries={entries}
-                tailors={tailors}
-                lots={lots}
-                operations={operations}
+                entries={facilityEntries}
+                tailors={facilityTailors}
+                lots={facilityLots}
+                operations={facilityOperations}
               />
             )}
 
-            {activeTab === "audit" && <AuditLogView logs={auditLogs} />}
+            {activeTab === "audit" && <AuditLogView logs={facilityAuditLogs} />}
 
             {activeTab === "manage" && (
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <TailorManagement
-                  tailors={tailors}
+                  tailors={facilityTailors}
                   onAddTailor={addTailor}
                   onToggleActive={toggleTailorActive}
                 />
                 <OperationManagement
-                  operations={operations}
+                  operations={facilityOperations}
                   onAddOperation={addOperation}
                 />
               </div>
@@ -522,14 +544,14 @@ function DashboardContent() {
         onClose={() => setIsReportModalOpen(false)}
         monthStr="2026-09"
         salarySummaries={salarySummaries}
-        entries={entries}
-        tailors={tailors}
-        lots={lots}
-        operations={operations}
-        adjustments={adjustments}
+        entries={facilityEntries}
+        tailors={facilityTailors}
+        lots={facilityLots}
+        operations={facilityOperations}
+        adjustments={facilityAdjustments}
         closedMonths={closedMonths}
-        auditLogs={auditLogs}
-        unitId={unitId}
+        auditLogs={facilityAuditLogs}
+        unitId={activeUnitId}
       />
 
       {/* User Profile & Role Settings Modal */}

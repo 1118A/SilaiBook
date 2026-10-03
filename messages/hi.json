@@ -191,6 +191,8 @@
     "owner": "यूनिट मालिक",
     "manager": "मैनेजर",
     "tailor": "दर्जी",
+    "globalUser": "ग्लोबल यूजर",
+    "accessAuditor": "एक्सेस ऑडिटर",
     "email": "ईमेल या फोन",
     "password": "पासवर्ड",
     "signInButton": "आगे बढ़ने के लिए साइन इन करें",

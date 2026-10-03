@@ -31,56 +31,33 @@ import { AdminUnitsManagement, MockUnitData } from "./AdminUnitsManagement";
 import { AdminActivityLogs } from "./AdminActivityLogs";
 import { AdminSystemSettings } from "./AdminSystemSettings";
 
-const INITIAL_UNITS: MockUnitData[] = [
-  {
-    id: "a0000000-0000-0000-0000-000000000001",
-    name: "Radhe Krishna Garments (સુરત)",
-    cluster: "Surat Textile Market, Gujarat",
-    ownerName: "Pravinbhai Patel",
-    ownerEmail: "owner@radhegarments.com",
-    tailorsCount: 12,
-    activeLotsCount: 8,
-    verifiedPieces: 45200,
-    totalVolumePaise: 38420000, // ₹3,84,200.00
-    status: "active",
-  },
-  {
-    id: "a0000000-0000-0000-0000-000000000002",
-    name: "Ambica Stitching Works (અમદાવાદ)",
-    cluster: "Narol Industrial Zone, Ahmedabad",
-    ownerName: "Hasmukh Shah",
-    ownerEmail: "hasmukh@ambicastitch.com",
-    tailorsCount: 8,
-    activeLotsCount: 5,
-    verifiedPieces: 28400,
-    totalVolumePaise: 24140000, // ₹2,41,400.00
-    status: "active",
-  },
-  {
-    id: "a0000000-0000-0000-0000-000000000003",
-    name: "Shree Ganesh Fashion Hub (સુરત)",
-    cluster: "Udhna GIDC, Surat",
-    ownerName: "Bhavin Desai",
-    ownerEmail: "bhavin@shreeganesh.com",
-    tailorsCount: 15,
-    activeLotsCount: 11,
-    verifiedPieces: 62100,
-    totalVolumePaise: 52785000, // ₹5,27,850.00
-    status: "trial",
-  },
-  {
-    id: "a0000000-0000-0000-0000-000000000004",
-    name: "Maruti Tex Fab (તિરૂપુર)",
-    cluster: "Tirupur Apparel Park, Tamil Nadu",
-    ownerName: "Ketan Vaghasiya",
-    ownerEmail: "ketan@marutitex.com",
-    tailorsCount: 22,
-    activeLotsCount: 14,
-    verifiedPieces: 98000,
-    totalVolumePaise: 83300000, // ₹8,33,000.00
-    status: "active",
-  },
-];
+const PRODUCTION_UNITS_KEY = "silaibook_production_units";
+
+function loadProductionUnits(): MockUnitData[] {
+  if (typeof window === "undefined") return [];
+  try {
+    const raw = localStorage.getItem(PRODUCTION_UNITS_KEY);
+    if (raw) return JSON.parse(raw);
+    const defaults: MockUnitData[] = [
+      {
+        id: "a0000000-0000-0000-0000-000000000001",
+        name: "Radhe Krishna Garments (સુરત)",
+        cluster: "Surat Textile Cluster, Gujarat",
+        ownerName: "Pravinbhai Patel",
+        ownerEmail: "owner@radhegarments.com",
+        tailorsCount: 8,
+        activeLotsCount: 3,
+        verifiedPieces: 1540,
+        totalVolumePaise: 770000,
+        status: "active",
+      },
+    ];
+    localStorage.setItem(PRODUCTION_UNITS_KEY, JSON.stringify(defaults));
+    return defaults;
+  } catch {
+    return [];
+  }
+}
 
 type AdminTab = "growth" | "users" | "units" | "activity" | "settings";
 
@@ -88,7 +65,7 @@ export function MainAdminDashboard() {
   const t = useTranslations();
   const { user, switchUnit } = useAuth();
 
-  const [units, setUnits] = useState<MockUnitData[]>(INITIAL_UNITS);
+  const [units, setUnits] = useState<MockUnitData[]>(() => loadProductionUnits());
   const [usersList, setUsersList] = useState<RegisteredUser[]>(() => loadUserRegistry());
   const [activeTab, setActiveTab] = useState<AdminTab>("growth");
   const [successBanner, setSuccessBanner] = useState<string | null>(null);
@@ -104,9 +81,13 @@ export function MainAdminDashboard() {
   const handleCreateUnit = (newUnitData: Omit<MockUnitData, "id">) => {
     const newUnit: MockUnitData = {
       ...newUnitData,
-      id: `a0000000-0000-0000-0000-00000000000${units.length + 1}`,
+      id: `a0000000-0000-0000-0000-${String(units.length + 1).padStart(12, "0")}`,
     };
-    setUnits([newUnit, ...units]);
+    const updated = [newUnit, ...units];
+    setUnits(updated);
+    if (typeof window !== "undefined") {
+      localStorage.setItem(PRODUCTION_UNITS_KEY, JSON.stringify(updated));
+    }
     setSuccessBanner(t("admin.unitRegisteredSuccess"));
     setTimeout(() => setSuccessBanner(null), 4000);
   };
@@ -123,6 +104,15 @@ export function MainAdminDashboard() {
   };
 
   const handleUpdateRole = (userId: string, newRole: Role) => {
+    // Strict RBAC Security Enforcement: Global User and Access Auditor CANNOT be elevated to main_admin
+    if (newRole === "main_admin") {
+      const targetUser = usersList.find((u) => u.id === userId);
+      if (targetUser && (targetUser.role === "global_user" || targetUser.role === "access_auditor")) {
+        alert("Security Violation: Users with 'Global User' or 'Access Auditor' roles are strictly blocked from obtaining administrative permissions.");
+        return;
+      }
+    }
+
     const updated = usersList.map((u) => (u.id === userId ? { ...u, role: newRole } : u));
     setUsersList(updated);
     saveUserRegistry(updated);

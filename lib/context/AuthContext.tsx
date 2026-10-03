@@ -16,6 +16,7 @@ export interface UserSession {
   email: string;
   role: Role;
   unit_id: string;
+  unit_name?: string;
   status: UserStatus;
   phone?: string;
   avatar_url?: string;
@@ -143,11 +144,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       email: registeredUser.email,
       role: registeredUser.role,
       unit_id: registeredUser.unit_id,
+      unit_name: registeredUser.unit_name,
       status: registeredUser.status,
     };
 
     if (typeof window !== "undefined") {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(sessionUser));
+      document.cookie = `silaibook_role=${sessionUser.role}; path=/; max-age=604800; SameSite=Lax`;
+      document.cookie = `silaibook_unit=${sessionUser.unit_id}; path=/; max-age=604800; SameSite=Lax`;
       window.dispatchEvent(new Event(AUTH_CHANGE_EVENT));
     }
 
@@ -183,6 +187,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const logout = useCallback(() => {
     if (typeof window !== "undefined") {
       localStorage.removeItem(STORAGE_KEY);
+      document.cookie = "silaibook_role=; path=/; max-age=0";
+      document.cookie = "silaibook_unit=; path=/; max-age=0";
       window.dispatchEvent(new Event(AUTH_CHANGE_EVENT));
     }
   }, []);
@@ -192,6 +198,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (typeof window !== "undefined" && user) {
         const updated = { ...user, unit_id };
         localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+        document.cookie = `silaibook_unit=${unit_id}; path=/; max-age=604800; SameSite=Lax`;
         window.dispatchEvent(new Event(AUTH_CHANGE_EVENT));
       }
     },
