@@ -34,4 +34,14 @@ describe("Main Admin Dashboard & Governance Subsystem", () => {
     const cohortDay30 = 71;
     expect(cohortDay1).toBeGreaterThan(cohortDay30);
   });
+
+  it("verifies admin dashboard access isolation", async () => {
+    const { canAccessSection, isFullAdmin } = await import("@/lib/auth/permissions");
+    expect(canAccessSection("main_admin", "main_admin_overview")).toBe(true);
+    expect(canAccessSection("tailor", "main_admin_overview")).toBe(false);
+    expect(canAccessSection("manager", "main_admin_overview")).toBe(false);
+    expect(canAccessSection("owner", "main_admin_overview")).toBe(false);
+    expect(isFullAdmin("main_admin")).toBe(true);
+    expect(isFullAdmin("manager")).toBe(false);
+  });
 });

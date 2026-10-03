@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { useParams, useRouter } from "next/navigation";
+import Link from "next/link";
 import {
   Zap,
   User,
@@ -264,6 +265,22 @@ function DashboardContent() {
               </button>
             )}
           </div>
+
+          {/* Platform Super Admin Console Shortcut */}
+          {isPlatformAdmin && (
+            <Link
+              href={`/${locale}/admin`}
+              className="w-full flex items-center justify-between p-3 rounded-2xl bg-gradient-to-r from-purple-900 to-indigo-900 text-white text-xs font-bold shadow-md shadow-purple-950/20 hover:opacity-95 transition group"
+            >
+              <div className="flex items-center gap-2">
+                <ShieldCheck className="w-4 h-4 text-purple-300 group-hover:scale-110 transition" />
+                <span>{t("admin.superAdminConsole")}</span>
+              </div>
+              <span className="text-[10px] bg-purple-500/30 px-2 py-0.5 rounded-full border border-purple-400/30">
+                Console →
+              </span>
+            </Link>
+          )}
 
           {/* Navigation Menu */}
           <nav className="space-y-1.5">

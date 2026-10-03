@@ -24,10 +24,13 @@ export default function HomePage() {
   const t = useTranslations();
   const params = useParams();
   const locale = (params.locale as string) || "en";
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated, user, logout } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  const dashboardTarget = isAuthenticated ? `/${locale}/dashboard` : `/${locale}/auth/signin?redirect=${encodeURIComponent(`/${locale}/dashboard`)}`;
+  const isAdmin = user?.role === "main_admin";
+  const dashboardTarget = isAuthenticated
+    ? (isAdmin ? `/${locale}/admin` : `/${locale}/dashboard`)
+    : `/${locale}/auth/signin?redirect=${encodeURIComponent(`/${locale}/dashboard`)}`;
 
   return (
     <div className="min-h-screen flex flex-col bg-[#FBF6EC]/70 text-slate-900 dark:bg-[#14172B] dark:text-slate-100 font-sans selection:bg-indigo-900 selection:text-white transition-colors duration-200">
@@ -57,6 +60,15 @@ export default function HomePage() {
 
             {isAuthenticated ? (
               <div className="flex items-center gap-2">
+                {isAdmin && (
+                  <Link
+                    href={`/${locale}/admin`}
+                    className="px-3 py-2 rounded-xl bg-purple-100 dark:bg-purple-950/60 hover:bg-purple-200 dark:hover:bg-purple-900/60 border border-purple-300 dark:border-purple-800 text-purple-800 dark:text-purple-300 text-xs font-bold transition flex items-center gap-1.5"
+                  >
+                    <ShieldCheck className="w-3.5 h-3.5" />
+                    <span>{t("nav.mainAdmin")}</span>
+                  </Link>
+                )}
                 <Link
                   href={`/${locale}/dashboard`}
                   className="px-4 py-2 rounded-xl bg-indigo-900 hover:bg-indigo-800 text-white text-xs font-bold transition shadow-sm hover:shadow-indigo-900/20"
@@ -94,10 +106,10 @@ export default function HomePage() {
             <ThemeToggle />
             {isAuthenticated ? (
               <Link
-                href={`/${locale}/dashboard`}
+                href={isAdmin ? `/${locale}/admin` : `/${locale}/dashboard`}
                 className="px-3 py-1.5 rounded-xl bg-indigo-900 text-white text-xs font-semibold"
               >
-                {t("nav.dashboard")}
+                {isAdmin ? t("nav.mainAdmin") : t("nav.dashboard")}
               </Link>
             ) : (
               <Link

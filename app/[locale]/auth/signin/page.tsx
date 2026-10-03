@@ -31,7 +31,11 @@ function SignInForm() {
 
     const result = login(email, password);
     if (result.success) {
-      router.push(redirectUrl);
+      const target =
+        result.user?.role === "main_admin" && !searchParams.get("redirect")
+          ? `/${locale}/admin`
+          : redirectUrl;
+      router.push(target);
     } else if (result.status === "pending_verification") {
       setIsPendingVerification(true);
     } else if (result.status === "rejected") {
@@ -47,7 +51,11 @@ function SignInForm() {
     setEmail(demoEmail);
     const result = login(demoEmail);
     if (result.success) {
-      router.push(redirectUrl);
+      const target =
+        result.user?.role === "main_admin" && !searchParams.get("redirect")
+          ? `/${locale}/admin`
+          : redirectUrl;
+      router.push(target);
     } else if (result.status === "pending_verification") {
       setIsPendingVerification(true);
     }

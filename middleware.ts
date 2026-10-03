@@ -24,9 +24,16 @@ export default async function middleware(request: NextRequest) {
     sectionParam === "main_admin_overview";
 
   if (isTargetingAdmin) {
+    const localeMatch = pathname.match(/^\/(en|gu|hi)/);
+    const locale = localeMatch ? localeMatch[1] : "en";
+
+    if (!role) {
+      const signinUrl = new URL(`/${locale}/auth/signin`, request.url);
+      signinUrl.searchParams.set("redirect", pathname);
+      return NextResponse.redirect(signinUrl);
+    }
+
     if (role !== "main_admin") {
-      const localeMatch = pathname.match(/^\/(en|gu|hi)/);
-      const locale = localeMatch ? localeMatch[1] : "en";
       const redirectUrl = new URL(`/${locale}/dashboard`, request.url);
       redirectUrl.searchParams.set("access_denied", "true");
       return NextResponse.redirect(redirectUrl);
