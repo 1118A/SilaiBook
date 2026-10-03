@@ -18,6 +18,7 @@ import {
 import { Tailor, Lot, Operation, PieceEntry } from "@/lib/types/payroll";
 import { formatINR, fromPaise, toPaise, multiplyPaise } from "@/lib/money";
 import { pieceEntrySchema } from "@/lib/validations/entry";
+import { useAuth } from "@/lib/context/AuthContext";
 
 interface QuickEntryFormProps {
   tailors: Tailor[];
@@ -29,8 +30,17 @@ interface QuickEntryFormProps {
 
 export function QuickEntryForm({ tailors, lots, operations, lastEntry, onSave }: QuickEntryFormProps) {
   const t = useTranslations();
+  const { user } = useAuth();
+  const isTailor = user?.role === "tailor";
 
-  const [tailorId, setTailorId] = useState<string>(tailors[0]?.id || "");
+  // If user is tailor, match their tailor ID or default to their profile
+  const matchedTailor = isTailor
+    ? tailors.find((t) => t.id === user.tailor_id || t.name.toLowerCase().includes(user.name.toLowerCase())) || tailors[0]
+    : undefined;
+
+  const [tailorId, setTailorId] = useState<string>(
+    matchedTailor ? matchedTailor.id : tailors[0]?.id || ""
+  );
   const [lotId, setLotId] = useState<string>(lots[0]?.id || "");
   const [operationId, setOperationId] = useState<string>(operations[0]?.id || "");
   const [pieces, setPieces] = useState<number>(10);
@@ -143,20 +153,33 @@ export function QuickEntryForm({ tailors, lots, operations, lastEntry, onSave }:
           <div>
             <label className="flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">
               <User className="w-3 h-3 text-indigo-900 dark:text-indigo-400" />
-              <span>{t("entry.selectTailor")}</span>
+              <span>
+                {isTailor ? t("profile.tailorLockedIdentity") : t("entry.selectTailor")}
+              </span>
             </label>
-            <select
-              value={tailorId}
-              onChange={(e) => setTailorId(e.target.value)}
-              className="w-full h-10 px-3 rounded-xl bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white font-semibold text-xs border border-slate-200 dark:border-slate-800 focus:border-indigo-900 dark:focus:border-indigo-400 focus:outline-none"
-            >
-              <option value="">-- {t("entry.selectTailor")} --</option>
-              {tailors.filter((t) => t.active).map((t) => (
-                <option key={t.id} value={t.id}>
-                  {t.name}
-                </option>
-              ))}
-            </select>
+            {isTailor ? (
+              <div className="w-full h-10 px-3 rounded-xl bg-slate-100 dark:bg-slate-900/80 text-slate-800 dark:text-slate-200 font-bold text-xs border border-slate-200 dark:border-slate-800 flex items-center justify-between">
+                <span>{matchedTailor?.name || user?.name}</span>
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300">
+                  {t("profile.you")}
+                </span>
+              </div>
+            ) : (
+              <select
+                value={tailorId}
+                onChange={(e) => setTailorId(e.target.value)}
+                className="w-full h-10 px-3 rounded-xl bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white font-semibold text-xs border border-slate-200 dark:border-slate-800 focus:border-indigo-900 dark:focus:border-indigo-400 focus:outline-none"
+              >
+                <option value="">-- {t("entry.selectTailor")} --</option>
+                {tailors
+                  .filter((t) => t.active)
+                  .map((t) => (
+                    <option key={t.id} value={t.id}>
+                      {t.name}
+                    </option>
+                  ))}
+              </select>
+            )}
           </div>
 
           <div>

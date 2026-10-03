@@ -5,6 +5,7 @@ import { Role } from "@/lib/types/payroll";
 import {
   findUserByEmail,
   registerNewUser,
+  updateUserProfile,
   RegisteredUser,
   UserStatus,
 } from "@/lib/auth/userRegistry";
@@ -16,6 +17,10 @@ export interface UserSession {
   role: Role;
   unit_id: string;
   status: UserStatus;
+  phone?: string;
+  avatar_url?: string;
+  language?: "en" | "gu" | "hi";
+  tailor_id?: string;
 }
 
 export interface AuthResult {
@@ -31,6 +36,7 @@ interface AuthContextType {
   isLoading: boolean;
   login: (email: string, password?: string) => AuthResult;
   signup: (name: string, email: string, role: Role, unitName?: string) => AuthResult;
+  updateProfile: (updates: { name?: string; phone?: string; avatar_url?: string; language?: "en" | "gu" | "hi" }) => void;
   logout: () => void;
   switchUnit: (unit_id: string) => void;
   switchRole: (role: Role) => void;
@@ -203,6 +209,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     [user]
   );
 
+  const updateProfile = useCallback(
+    (updates: { name?: string; phone?: string; avatar_url?: string; language?: "en" | "gu" | "hi" }) => {
+      if (!user) return;
+      const updatedRegistry = updateUserProfile(user.id, updates);
+      if (updatedRegistry) {
+        const updatedSession: UserSession = {
+          ...user,
+          name: updatedRegistry.name,
+          phone: updatedRegistry.phone,
+          avatar_url: updatedRegistry.avatar_url,
+          language: updatedRegistry.language,
+          // role remains strictly immutable
+        };
+        if (typeof window !== "undefined") {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedSession));
+          window.dispatchEvent(new Event(AUTH_CHANGE_EVENT));
+        }
+      }
+    },
+    [user]
+  );
+
   return (
     <AuthContext.Provider
       value={{
@@ -211,6 +239,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         isLoading: false,
         login,
         signup,
+        updateProfile,
         logout,
         switchUnit,
         switchRole,

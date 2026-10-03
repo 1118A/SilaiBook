@@ -15,6 +15,10 @@ export interface RegisteredUser {
   role: Role;
   unit_id: string;
   unit_name?: string;
+  phone?: string;
+  avatar_url?: string;
+  language?: "en" | "gu" | "hi";
+  tailor_id?: string;
   status: UserStatus;
   created_at: string;
 }
@@ -120,6 +124,14 @@ export function findUserByEmail(email: string): RegisteredUser | undefined {
 }
 
 /**
+ * Looks up user by ID.
+ */
+export function findUserById(userId: string): RegisteredUser | undefined {
+  const users = loadUserRegistry();
+  return users.find((u) => u.id === userId);
+}
+
+/**
  * Registers a new user with status rule:
  * - tailor: approved immediately
  * - manager or owner: pending_verification
@@ -160,6 +172,41 @@ export function registerNewUser(
     user: newUser,
     requiresAdminVerification: isRequiresVerification,
   };
+}
+
+/**
+ * Updates user profile details (name, phone, avatar_url, language).
+ * STRICT SECURITY: The `role` property is excluded and protected from user modification.
+ */
+export function updateUserProfile(
+  userId: string,
+  updates: {
+    name?: string;
+    phone?: string;
+    avatar_url?: string;
+    language?: "en" | "gu" | "hi";
+  }
+): RegisteredUser | undefined {
+  const users = loadUserRegistry();
+  let updatedUser: RegisteredUser | undefined;
+
+  const updated = users.map((u) => {
+    if (u.id === userId) {
+      updatedUser = {
+        ...u,
+        name: updates.name !== undefined ? updates.name.trim() : u.name,
+        phone: updates.phone !== undefined ? updates.phone.trim() : u.phone,
+        avatar_url: updates.avatar_url !== undefined ? updates.avatar_url : u.avatar_url,
+        language: updates.language !== undefined ? updates.language : u.language,
+        // user_role remains untouched and immutable!
+      };
+      return updatedUser;
+    }
+    return u;
+  });
+
+  saveUserRegistry(updated);
+  return updatedUser;
 }
 
 /**

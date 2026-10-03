@@ -55,6 +55,7 @@ import {
 } from "@/lib/analytics/engine";
 import { MainAdminDashboard } from "@/components/admin/MainAdminDashboard";
 import { AccessDeniedCard } from "@/components/auth/AccessDeniedCard";
+import { UserProfileModal } from "@/components/profile/UserProfileModal";
 import { canAccessSection, SectionKey, getRoleBadgeInfo } from "@/lib/auth/permissions";
 
 type TabType = "mainAdmin" | "salary" | "analytics" | "verification" | "quickEntry" | "tailorView" | "entries" | "lots" | "audit" | "manage";
@@ -120,12 +121,17 @@ function DashboardContent() {
   const [selectedTailorForView, setSelectedTailorForView] = useState<string>(tailors[0]?.id || "");
   const [analyticsMonth] = useState<string>("2026-09");
   const [isReportModalOpen, setIsReportModalOpen] = useState<boolean>(false);
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState<boolean>(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
 
   const { isOnline, pendingCount: offlinePendingCount, isSyncing, triggerSync } = useOfflineSync(entries, addEntry);
 
   const activeTailors = tailors.filter((t) => t.active);
-  const currentTailor = tailors.find((t) => t.id === selectedTailorForView) || tailors[0];
+  const isTailor = currentRole === "tailor";
+  const matchedTailor = isTailor
+    ? tailors.find((t) => t.id === user?.tailor_id || t.name.toLowerCase().includes(user?.name.toLowerCase() || "")) || tailors[0]
+    : undefined;
+  const currentTailor = isTailor ? matchedTailor : (tailors.find((t) => t.id === selectedTailorForView) || tailors[0]);
   const pendingCount = entries.filter((e) => e.status === "pending").length;
 
   const salarySummaries = calculateMonthlySalary(tailors, entries, adjustments, "2026-09").tailors;
@@ -235,13 +241,21 @@ function DashboardContent() {
         {/* Sidebar Footer Controls */}
         <div className="pt-4 border-t border-slate-200 dark:border-slate-800 space-y-3">
           {user && (
-            <div className="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 flex items-center justify-between gap-2">
+            <div
+              onClick={() => setIsProfileModalOpen(true)}
+              className="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 flex items-center justify-between gap-2 cursor-pointer hover:border-indigo-500/50 transition group"
+            >
               <div className="flex items-center gap-2 min-w-0">
-                <div className="w-8 h-8 rounded-full bg-indigo-900 dark:bg-indigo-600 text-white flex items-center justify-center font-bold text-xs shrink-0 uppercase">
-                  {user.name.charAt(0)}
+                <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-indigo-900 to-purple-600 text-white flex items-center justify-center font-bold text-xs shrink-0 overflow-hidden shadow-sm">
+                  {user.avatar_url && user.avatar_url.startsWith("data:image") ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={user.avatar_url} alt={user.name} className="w-full h-full object-cover" />
+                  ) : (
+                    <span>{user.avatar_url || user.name.charAt(0)}</span>
+                  )}
                 </div>
                 <div className="min-w-0">
-                  <p className="text-xs font-bold text-slate-900 dark:text-white truncate">
+                  <p className="text-xs font-bold text-slate-900 dark:text-white truncate group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition">
                     {user.name}
                   </p>
                   <p className={`text-[10px] font-bold px-1.5 py-0.5 rounded-md inline-block mt-0.5 border ${roleBadge.bgClass} ${roleBadge.textClass} ${roleBadge.borderClass}`}>
@@ -250,7 +264,8 @@ function DashboardContent() {
                 </div>
               </div>
               <button
-                onClick={() => {
+                onClick={(e) => {
+                  e.stopPropagation();
                   logout();
                   router.push(`/${locale}/auth/signin`);
                 }}
@@ -394,20 +409,22 @@ function DashboardContent() {
 
             {activeTab === "tailorView" && (
               <div className="space-y-4">
-                <div className="flex items-center justify-center gap-3 bg-slate-900 p-3 rounded-2xl border border-slate-800 max-w-xl mx-auto">
-                  <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">{t("entry.selectTailor")}:</label>
-                  <select
-                    value={selectedTailorForView}
-                    onChange={(e) => setSelectedTailorForView(e.target.value)}
-                    className="px-3 py-1.5 rounded-xl bg-slate-800 text-sm font-semibold text-white border border-slate-700"
-                  >
-                    {tailors.map((tailor) => (
-                      <option key={tailor.id} value={tailor.id}>
-                        {tailor.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+                {!isTailor && (
+                  <div className="flex items-center justify-center gap-3 bg-white dark:bg-slate-900 p-3 rounded-2xl border border-slate-200 dark:border-slate-800 max-w-xl mx-auto shadow-sm">
+                    <label className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">{t("entry.selectTailor")}:</label>
+                    <select
+                      value={selectedTailorForView}
+                      onChange={(e) => setSelectedTailorForView(e.target.value)}
+                      className="px-3 py-1.5 rounded-xl bg-slate-50 dark:bg-slate-800 text-sm font-semibold text-slate-900 dark:text-white border border-slate-200 dark:border-slate-700"
+                    >
+                      {tailors.map((tailor) => (
+                        <option key={tailor.id} value={tailor.id}>
+                          {tailor.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
 
                 {currentTailor && (
                   <TailorEntryView
@@ -472,6 +489,12 @@ function DashboardContent() {
         closedMonths={closedMonths}
         auditLogs={auditLogs}
         unitId={unitId}
+      />
+
+      {/* User Profile & Role Settings Modal */}
+      <UserProfileModal
+        isOpen={isProfileModalOpen}
+        onClose={() => setIsProfileModalOpen(false)}
       />
     </div>
   );

@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { ClipboardList, Filter } from "lucide-react";
 import { PieceEntry, Tailor, Lot, Operation } from "@/lib/types/payroll";
 import { formatINR, fromPaise, multiplyPaise } from "@/lib/money";
+import { useAuth } from "@/lib/context/AuthContext";
 
 interface EntryListProps {
   entries: PieceEntry[];
@@ -15,14 +16,24 @@ interface EntryListProps {
 
 export function EntryList({ entries, tailors, lots, operations }: EntryListProps) {
   const t = useTranslations();
+  const { user } = useAuth();
+  const isTailor = user?.role === "tailor";
 
-  const [selectedTailorId, setSelectedTailorId] = useState<string>("all");
+  const matchedTailor = isTailor
+    ? tailors.find((t) => t.id === user.tailor_id || t.name.toLowerCase().includes(user.name.toLowerCase())) || tailors[0]
+    : undefined;
+
+  const [selectedTailorId, setSelectedTailorId] = useState<string>(
+    isTailor && matchedTailor ? matchedTailor.id : "all"
+  );
   const [selectedLotId, setSelectedLotId] = useState<string>("all");
   const [selectedStatus, setSelectedStatus] = useState<string>("all");
   const [searchDate, setSearchDate] = useState<string>("");
 
   const filteredEntries = entries.filter((entry) => {
-    if (selectedTailorId !== "all" && entry.tailor_id !== selectedTailorId) return false;
+    // Strict Tailor Data Isolation: If tailor, enforce own entries only!
+    if (isTailor && matchedTailor && entry.tailor_id !== matchedTailor.id) return false;
+    if (!isTailor && selectedTailorId !== "all" && entry.tailor_id !== selectedTailorId) return false;
     if (selectedLotId !== "all" && entry.lot_id !== selectedLotId) return false;
     if (selectedStatus !== "all" && entry.status !== selectedStatus) return false;
     if (searchDate && entry.work_date !== searchDate) return false;
@@ -43,18 +54,27 @@ export function EntryList({ entries, tailors, lots, operations }: EntryListProps
 
         {/* Filter Controls */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-          <select
-            value={selectedTailorId}
-            onChange={(e) => setSelectedTailorId(e.target.value)}
-            className="h-10 px-3 rounded-xl bg-slate-50 dark:bg-slate-950 text-xs font-semibold text-slate-900 dark:text-white border border-slate-200 dark:border-slate-800"
-          >
-            <option value="all">{t("common.all")} {t("nav.tailors")}</option>
-            {tailors.map((tailor) => (
-              <option key={tailor.id} value={tailor.id}>
-                {tailor.name}
-              </option>
-            ))}
-          </select>
+          {isTailor ? (
+            <div className="h-10 px-3 rounded-xl bg-slate-100 dark:bg-slate-800 text-xs font-bold text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 flex items-center justify-between">
+              <span className="truncate">{matchedTailor?.name || user?.name}</span>
+              <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 shrink-0 ml-1">
+                {t("profile.you")}
+              </span>
+            </div>
+          ) : (
+            <select
+              value={selectedTailorId}
+              onChange={(e) => setSelectedTailorId(e.target.value)}
+              className="h-10 px-3 rounded-xl bg-slate-50 dark:bg-slate-950 text-xs font-semibold text-slate-900 dark:text-white border border-slate-200 dark:border-slate-800"
+            >
+              <option value="all">{t("common.all")} {t("nav.tailors")}</option>
+              {tailors.map((tailor) => (
+                <option key={tailor.id} value={tailor.id}>
+                  {tailor.name}
+                </option>
+              ))}
+            </select>
+          )}
 
           <select
             value={selectedLotId}
