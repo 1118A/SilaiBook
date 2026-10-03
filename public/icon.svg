@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" aria-label="SilaiBook App Icon">
+  <!-- Indigo App Icon Background with Squircle Clip -->
+  <rect width="512" height="512" rx="112" fill="#2B3A8C" />
+
+  <!-- Outer Rounded Ticket & Needle Eye in Pristine White -->
+  <rect x="116" y="96" width="280" height="320" rx="64" 
+        fill="none" 
+        stroke="#FFFFFF" 
+        stroke-width="32" 
+        stroke-linecap="round" 
+        stroke-linejoin="round" />
+
+  <!-- Needle Eye Slot -->
+  <rect x="238" y="140" width="36" height="74" rx="18" 
+        fill="#FFFFFF" />
+
+  <!-- Dynamic Turmeric Stitch Checkmark -->
+  <path d="M172 264 L238 330 L354 196" 
+        fill="none" 
+        stroke="#E9A21B" 
+        stroke-width="38" 
+        stroke-linecap="round" 
+        stroke-linejoin="round" />
+</svg>

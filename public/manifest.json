@@ -1,0 +1,18 @@
+{
+  "name": "SilaiBook — Garment Piece-Rate Payroll",
+  "short_name": "SilaiBook",
+  "description": "Piece-rate payroll and verification app for garment manufacturing units",
+  "start_url": "/en/dashboard",
+  "display": "standalone",
+  "background_color": "#FBF6EC",
+  "theme_color": "#2B3A8C",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

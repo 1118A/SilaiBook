@@ -20,12 +20,12 @@ export function OperationAnalyticsView({ metrics }: OperationAnalyticsViewProps)
   }));
 
   return (
-    <div className="bg-slate-900 p-6 rounded-3xl border border-slate-800 shadow-xl space-y-6">
+    <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-6">
       <div className="flex items-center gap-2.5">
-        <div className="w-8 h-8 rounded-lg bg-violet-500/20 border border-violet-500/30 flex items-center justify-center text-violet-400">
+        <div className="w-8 h-8 rounded-lg bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-900 dark:text-indigo-400">
           <Scissors className="w-4 h-4" />
         </div>
-        <h2 className="text-xl font-bold text-white tracking-tight">
+        <h2 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight">
           {t("analytics.operationDistribution")}
         </h2>
       </div>
@@ -33,24 +33,24 @@ export function OperationAnalyticsView({ metrics }: OperationAnalyticsViewProps)
       <div className="h-64 w-full pt-2">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={chartData} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
+            <CartesianGrid strokeDasharray="3 3" stroke="#cbd5e1" className="dark:stroke-slate-800" />
             <XAxis dataKey="name" stroke="#64748b" tick={{ fontSize: 11 }} />
             <YAxis stroke="#64748b" tick={{ fontSize: 11 }} />
             <Tooltip
-              contentStyle={{ backgroundColor: "#090d16", borderColor: "#1e293b", borderRadius: "8px", fontSize: "12px" }}
-              itemStyle={{ color: "#c4b5fd" }}
+              contentStyle={{ backgroundColor: "#14172B", borderColor: "rgba(255,255,255,0.12)", borderRadius: "8px", fontSize: "12px", color: "#f8fafc" }}
+              itemStyle={{ color: "#8E9BFF" }}
             />
-            <Bar dataKey="pieces" fill="#8b5cf6" radius={[6, 6, 0, 0]} />
+            <Bar dataKey="pieces" fill="#2B3A8C" radius={[6, 6, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {metrics.map((op) => (
-          <div key={op.operationId} className="p-3 rounded-xl bg-slate-950 border border-slate-800 text-xs">
-            <div className="font-bold text-white mb-1">{op.operationName}</div>
-            <div className="text-slate-400 font-medium">Output: <span className="text-violet-400 font-bold">{op.totalPieces} pcs</span></div>
-            <div className="text-slate-400 font-medium">Avg Rate: <span className="text-emerald-400 font-bold">₹{fromPaise(op.avgRatePaise).toFixed(2)}</span></div>
+          <div key={op.operationId} className="p-3 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-xs">
+            <div className="font-bold text-slate-900 dark:text-white mb-1">{op.operationName}</div>
+            <div className="text-slate-500 dark:text-slate-400 font-medium">Output: <span className="text-indigo-900 dark:text-indigo-400 font-bold">{op.totalPieces} pcs</span></div>
+            <div className="text-slate-500 dark:text-slate-400 font-medium">Avg Rate: <span className="text-emerald-600 dark:text-emerald-400 font-bold">₹{fromPaise(op.avgRatePaise).toFixed(2)}</span></div>
           </div>
         ))}
       </div>

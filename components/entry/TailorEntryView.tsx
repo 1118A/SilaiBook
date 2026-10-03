@@ -44,53 +44,53 @@ export function TailorEntryView({ tailor, entries, lots, operations, onResubmit 
   return (
     <div className="space-y-6 max-w-xl mx-auto">
       {/* Profile Info Header */}
-      <div className="bg-slate-900 border border-slate-800 p-6 rounded-3xl text-white shadow-xl flex items-center justify-between">
+      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-3xl text-slate-900 dark:text-white shadow-sm flex items-center justify-between">
         <div>
-          <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-violet-400 mb-1">
+          <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400 mb-1">
             <UserCheck className="w-3.5 h-3.5" />
             <span>{t("home.forTailors")}</span>
           </div>
-          <h2 className="text-2xl font-black text-white">{tailor.name}</h2>
+          <h2 className="text-2xl font-black text-slate-900 dark:text-white">{tailor.name}</h2>
           {tailor.phone && (
-            <p className="text-slate-400 text-xs font-semibold mt-1 flex items-center gap-1">
-              <Phone className="w-3 h-3 text-slate-500" />
+            <p className="text-slate-500 dark:text-slate-400 text-xs font-semibold mt-1 flex items-center gap-1">
+              <Phone className="w-3 h-3 text-slate-400 dark:text-slate-500" />
               <span>{tailor.phone}</span>
             </p>
           )}
         </div>
 
-        <div className="w-12 h-12 rounded-2xl bg-violet-600/20 border border-violet-500/30 flex items-center justify-center text-violet-400">
+        <div className="w-12 h-12 rounded-2xl bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center text-indigo-900 dark:text-indigo-400">
           <Award className="w-6 h-6" />
         </div>
       </div>
 
       {/* Large Today Total Summary */}
       <div className="grid grid-cols-2 gap-4">
-        <div className="bg-slate-900 p-5 rounded-2xl border border-slate-800 text-center">
-          <div className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">
+        <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 text-center shadow-sm">
+          <div className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">
             {t("entry.totalPiecesToday")}
           </div>
-          <div className="text-4xl font-extrabold text-violet-400">
+          <div className="text-4xl font-extrabold text-indigo-900 dark:text-amber-400">
             {todaysTotalPieces}
           </div>
         </div>
 
-        <div className="bg-slate-900 p-5 rounded-2xl border border-slate-800 text-center">
-          <div className="flex items-center justify-center gap-1 text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">
-            <TrendingUp className="w-3.5 h-3.5 text-emerald-400" />
+        <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 text-center shadow-sm">
+          <div className="flex items-center justify-center gap-1 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">
+            <TrendingUp className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
             <span>{t("entry.totalEarningsToday")}</span>
           </div>
-          <div className="text-2xl font-bold text-emerald-400 mt-1">
+          <div className="text-2xl font-bold text-emerald-600 dark:text-emerald-400 mt-1">
             {formatINR(todaysEstEarningsPaise)}
           </div>
         </div>
       </div>
 
       {/* Tailor's Entry Log */}
-      <div className="bg-slate-900 p-6 rounded-3xl border border-slate-800 shadow-xl space-y-4">
+      <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
         <div className="flex items-center gap-2">
-          <FileText className="w-4 h-4 text-violet-400" />
-          <h3 className="text-lg font-bold text-white">
+          <FileText className="w-4 h-4 text-indigo-900 dark:text-indigo-400" />
+          <h3 className="text-lg font-bold text-slate-900 dark:text-white">
             {t("nav.myEntries")} ({tailorEntries.length})
           </h3>
         </div>
@@ -109,49 +109,46 @@ export function TailorEntryView({ tailor, entries, lots, operations, onResubmit 
               return (
                 <div
                   key={entry.id}
-                  className="p-4 rounded-2xl bg-slate-950 border border-slate-800/80 space-y-2"
+                  className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800/80 space-y-2"
                 >
                   <div className="flex items-start justify-between">
                     <div>
-                      <div className="font-bold text-white text-sm">
+                      <div className="font-bold text-slate-900 dark:text-white text-sm">
                         {lot ? `${lot.lot_no} (${lot.style})` : "Lot"}
                       </div>
-                      <div className="text-xs text-slate-400 font-medium mt-0.5">
+                      <div className="text-xs text-slate-500 dark:text-slate-400 font-medium mt-0.5">
                         {op ? op.name : "Operation"} • {entry.work_date}
                       </div>
-                    </div>
-
-                    <div className="text-right">
-                      <div className="text-lg font-extrabold text-violet-400">
+                    </div>                    <div className="text-right">
+                      <div className="text-lg font-extrabold text-indigo-900 dark:text-amber-400">
                         {entry.pieces} pcs
                       </div>
-                      <div className="text-xs font-semibold text-emerald-400">
+                      <div className="text-xs font-semibold text-emerald-600 dark:text-emerald-400">
                         {formatINR(totalAmount)}
                       </div>
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between border-t border-slate-900 pt-2">
+                  <div className="flex items-center justify-between border-t border-slate-200 dark:border-slate-900 pt-2">
                     <span
-                      className={`inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase ${
-                        entry.status === "verified"
-                          ? "bg-emerald-950 text-emerald-300 border border-emerald-800/50"
+                      className={`inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase ${entry.status === "verified"
+                          ? "bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/50"
                           : entry.status === "rejected"
-                          ? "bg-rose-950 text-rose-300 border border-rose-800/50"
-                          : "bg-amber-950 text-amber-300 border border-amber-800/50"
-                      }`}
+                            ? "bg-rose-100 dark:bg-rose-950 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800/50"
+                            : "bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800/50"
+                        }`}
                     >
                       {entry.status === "verified"
                         ? t("common.verified")
                         : entry.status === "rejected"
-                        ? t("common.rejected")
-                        : t("common.pending")}
+                          ? t("common.rejected")
+                          : t("common.pending")}
                     </span>
 
                     {entry.status === "rejected" && (
                       <div className="flex items-center gap-2">
                         {entry.note && (
-                          <span className="text-xs text-rose-400 font-medium flex items-center gap-1">
+                          <span className="text-xs text-rose-600 dark:text-rose-400 font-medium flex items-center gap-1">
                             <AlertTriangle className="w-3 h-3" />
                             {entry.note}
                           </span>
@@ -160,9 +157,9 @@ export function TailorEntryView({ tailor, entries, lots, operations, onResubmit 
                           <button
                             type="button"
                             onClick={() => handleOpenResubmit(entry)}
-                            className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold bg-violet-600 hover:bg-violet-500 text-white transition shadow"
+                            className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold bg-indigo-900 dark:bg-indigo-600 hover:bg-indigo-800 text-white transition shadow"
                           >
-                            <RotateCcw className="w-3 h-3" />
+                            <RotateCcw className="w-3.5 h-3.5" />
                             <span>{t("entry.resubmit")}</span>
                           </button>
                         )}
@@ -179,10 +176,10 @@ export function TailorEntryView({ tailor, entries, lots, operations, onResubmit 
       {/* Resubmit Modal */}
       {resubmittingEntryId && (
         <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-800 p-6 rounded-3xl max-w-sm w-full shadow-2xl space-y-4">
-            <h3 className="text-base font-bold text-white">{t("entry.resubmit")}</h3>
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-3xl max-w-sm w-full shadow-2xl space-y-4">
+            <h3 className="text-base font-bold text-slate-900 dark:text-white">{t("entry.resubmit")}</h3>
             <div>
-              <label className="block text-xs font-semibold text-slate-400 uppercase mb-1">
+              <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase mb-1">
                 {t("entry.piecesCount")}
               </label>
               <input
@@ -190,21 +187,21 @@ export function TailorEntryView({ tailor, entries, lots, operations, onResubmit 
                 min="1"
                 value={resubmitPieces}
                 onChange={(e) => setResubmitPieces(parseInt(e.target.value) || 0)}
-                className="w-full h-11 px-3 rounded-xl bg-slate-950 text-white font-bold text-base border border-slate-800"
+                className="w-full h-11 px-3 rounded-xl bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white font-bold text-base border border-slate-200 dark:border-slate-800"
               />
             </div>
             <div className="flex items-center gap-2 pt-2">
               <button
                 type="button"
                 onClick={() => setResubmittingEntryId(null)}
-                className="flex-1 h-10 rounded-xl bg-slate-800 text-slate-300 font-semibold text-xs"
+                className="flex-1 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold text-xs hover:bg-slate-200 dark:hover:bg-slate-700"
               >
                 {t("common.cancel")}
               </button>
               <button
                 type="button"
                 onClick={handleConfirmResubmit}
-                className="flex-1 h-10 rounded-xl bg-violet-600 hover:bg-violet-500 text-white font-bold text-xs shadow"
+                className="flex-1 h-10 rounded-xl bg-indigo-900 dark:bg-indigo-600 hover:bg-indigo-800 text-white font-bold text-xs shadow"
               >
                 {t("common.submit")}
               </button>

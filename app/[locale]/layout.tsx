@@ -2,6 +2,7 @@ import { NextIntlClientProvider } from "next-intl";
 import { routing } from "@/i18n/routing";
 import { notFound } from "next/navigation";
 import { setRequestLocale } from "next-intl/server";
+import { AuthProvider } from "@/lib/context/AuthContext";
 
 type Props = {
   children: React.ReactNode;
@@ -27,9 +28,11 @@ export default async function LocaleLayout({ children, params }: Props) {
 
   return (
     <NextIntlClientProvider locale={locale} messages={messages}>
-      <div lang={locale} className="flex-1 flex flex-col">
-        {children}
-      </div>
+      <AuthProvider>
+        <div lang={locale} className="flex-1 flex flex-col">
+          {children}
+        </div>
+      </AuthProvider>
     </NextIntlClientProvider>
   );
 }

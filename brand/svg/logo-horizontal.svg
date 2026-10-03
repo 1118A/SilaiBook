@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 240" aria-label="SilaiBook Horizontal Logo">
+  <defs>
+    <style>
+      .brand-indigo { fill: #2B3A8C; }
+      .brand-turmeric { fill: #E9A21B; }
+      .brand-sub { fill: #5A6282; font-family: system-ui, -apple-system, sans-serif; font-size: 26px; font-weight: 600; }
+      .brand-title { fill: #1F2340; font-family: system-ui, -apple-system, sans-serif; font-size: 72px; font-weight: 800; letter-spacing: -1.5px; }
+    </style>
+  </defs>
+
+  <!-- Left Mark (scaled into 180x180 box at x=20, y=30) -->
+  <g transform="translate(20, 30) scale(0.3515625)">
+    <!-- Ticket Body -->
+    <rect x="96" y="80" width="320" height="352" rx="72" fill="none" stroke="#2B3A8C" stroke-width="36" stroke-linecap="round" stroke-linejoin="round" />
+    <!-- Needle Eye -->
+    <rect x="236" y="128" width="40" height="84" rx="20" fill="#2B3A8C" />
+    <!-- Gold Stitch Tick -->
+    <path d="M160 260 L236 336 L368 184" fill="none" stroke="#E9A21B" stroke-width="44" stroke-linecap="round" stroke-linejoin="round" />
+  </g>
+
+  <!-- Brand Typography -->
+  <text x="230" y="115" class="brand-title">
+    Silai<tspan fill="#E9A21B">Book</tspan>
+  </text>
+  <text x="234" y="165" class="brand-sub">
+    સિલાઈબુક · सिलाईबुक · Piece-Rate Ledger
+  </text>
+</svg>

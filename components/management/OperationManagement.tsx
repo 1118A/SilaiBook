@@ -37,13 +37,13 @@ export function OperationManagement({ operations, onAddOperation }: OperationMan
   };
 
   return (
-    <div className="bg-slate-900 p-6 rounded-3xl border border-slate-800 shadow-xl space-y-6">
+    <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg bg-violet-500/20 border border-violet-500/30 flex items-center justify-center text-violet-400">
+          <div className="w-8 h-8 rounded-lg bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center text-indigo-900 dark:text-indigo-400">
             <Scissors className="w-4 h-4" />
           </div>
-          <h2 className="text-xl font-bold text-white tracking-tight">
+          <h2 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight">
             {t("operations.title")} ({operations.length})
           </h2>
         </div>
@@ -51,7 +51,7 @@ export function OperationManagement({ operations, onAddOperation }: OperationMan
         <button
           type="button"
           onClick={() => setShowAdd(!showAdd)}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-violet-600 hover:bg-violet-500 text-white font-semibold text-xs transition"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-indigo-900 dark:bg-indigo-600 hover:bg-indigo-800 dark:hover:bg-indigo-500 text-white font-semibold text-xs transition"
         >
           {showAdd ? (
             <>
@@ -68,28 +68,28 @@ export function OperationManagement({ operations, onAddOperation }: OperationMan
       </div>
 
       {showAdd && (
-        <form onSubmit={handleSubmit} className="p-4 bg-slate-950 border border-slate-800 rounded-2xl space-y-3">
-          {errorMsg && <div className="text-rose-400 font-semibold text-xs">{errorMsg}</div>}
+        <form onSubmit={handleSubmit} className="p-4 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl space-y-3">
+          {errorMsg && <div className="text-rose-600 dark:text-rose-400 font-semibold text-xs">{errorMsg}</div>}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-semibold text-slate-400 mb-1">{t("operations.name")}</label>
+              <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">{t("operations.name")}</label>
               <input
                 type="text"
                 placeholder="e.g. Button Attach"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="w-full h-10 px-3 rounded-xl bg-slate-900 font-semibold text-white border border-slate-800 text-xs focus:border-violet-500 focus:outline-none"
+                className="w-full h-10 px-3 rounded-xl bg-white dark:bg-slate-900 font-semibold text-slate-900 dark:text-white border border-slate-200 dark:border-slate-800 text-xs focus:border-indigo-900 dark:focus:border-indigo-500 focus:outline-none"
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-400 mb-1">{t("operations.defaultRate")}</label>
+              <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">{t("operations.defaultRate")}</label>
               <input
                 type="number"
                 step="0.01"
                 min="0"
                 value={rateRupees}
                 onChange={(e) => setRateRupees(parseFloat(e.target.value) || 0)}
-                className="w-full h-10 px-3 rounded-xl bg-slate-900 font-bold text-white border border-slate-800 text-xs focus:border-violet-500 focus:outline-none"
+                className="w-full h-10 px-3 rounded-xl bg-white dark:bg-slate-900 font-bold text-slate-900 dark:text-white border border-slate-200 dark:border-slate-800 text-xs focus:border-indigo-900 dark:focus:border-indigo-500 focus:outline-none"
               />
             </div>
           </div>
@@ -106,12 +106,12 @@ export function OperationManagement({ operations, onAddOperation }: OperationMan
         {operations.map((op) => (
           <div
             key={op.id}
-            className="p-4 rounded-2xl bg-slate-950 border border-slate-800/80 flex items-center justify-between"
+            className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800/80 flex items-center justify-between"
           >
-            <div className="font-bold text-white text-sm">{op.name}</div>
+            <div className="font-bold text-slate-900 dark:text-white text-sm">{op.name}</div>
             <div className="text-right">
-              <span className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider block">{t("operations.defaultRate")}</span>
-              <span className="text-base font-extrabold text-violet-400">
+              <span className="text-[10px] text-slate-500 dark:text-slate-400 font-semibold uppercase tracking-wider block">{t("operations.defaultRate")}</span>
+              <span className="text-base font-extrabold text-indigo-900 dark:text-amber-400">
                 ₹{fromPaise(op.default_rate_paise).toFixed(2)}
               </span>
             </div>

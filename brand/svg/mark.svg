@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" aria-label="SilaiBook Official Brand Mark">
+  <defs>
+    <style>
+      :root {
+        --mark-primary: #2B3A8C;
+        --mark-accent: #E9A21B;
+      }
+    </style>
+  </defs>
+  <!-- Outer Rounded Ticket & Needle Eye Fusion -->
+  <rect x="96" y="80" width="320" height="352" rx="72" 
+        fill="none" 
+        stroke="var(--mark-primary, #2B3A8C)" 
+        stroke-width="36" 
+        stroke-linecap="round" 
+        stroke-linejoin="round" />
+
+  <!-- Needle Eye Slot at top center -->
+  <rect x="236" y="128" width="40" height="84" rx="20" 
+        fill="var(--mark-primary, #2B3A8C)" />
+
+  <!-- Dynamic Golden Thread forming Verified Tick (Passes through needle eye) -->
+  <path d="M160 260 L236 336 L368 184" 
+        fill="none" 
+        stroke="var(--mark-accent, #E9A21B)" 
+        stroke-width="44" 
+        stroke-linecap="round" 
+        stroke-linejoin="round" />
+</svg>

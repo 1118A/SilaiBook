@@ -12,9 +12,10 @@ import {
   Layers,
   User,
   Scissors,
+  Minus,
+  Plus,
 } from "lucide-react";
 import { Tailor, Lot, Operation, PieceEntry } from "@/lib/types/payroll";
-import { NumberPad } from "./NumberPad";
 import { formatINR, fromPaise, toPaise, multiplyPaise } from "@/lib/money";
 import { pieceEntrySchema } from "@/lib/validations/entry";
 
@@ -32,7 +33,7 @@ export function QuickEntryForm({ tailors, lots, operations, lastEntry, onSave }:
   const [tailorId, setTailorId] = useState<string>(tailors[0]?.id || "");
   const [lotId, setLotId] = useState<string>(lots[0]?.id || "");
   const [operationId, setOperationId] = useState<string>(operations[0]?.id || "");
-  const [pieces, setPieces] = useState<number>(0);
+  const [pieces, setPieces] = useState<number>(10);
   const [rateRupees, setRateRupees] = useState<number>(
     operations[0] ? fromPaise(operations[0].default_rate_paise) : 0
   );
@@ -76,7 +77,7 @@ export function QuickEntryForm({ tailors, lots, operations, lastEntry, onSave }:
 
     onSave(payload);
     setSuccessMsg(t("entry.entrySavedSuccess"));
-    setPieces(0);
+    setPieces(10);
     setTimeout(() => setSuccessMsg(null), 3000);
   };
 
@@ -93,95 +94,102 @@ export function QuickEntryForm({ tailors, lots, operations, lastEntry, onSave }:
   };
 
   return (
-    <div className="bg-slate-900 p-6 rounded-3xl border border-slate-800 shadow-xl max-w-xl mx-auto space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="bg-white dark:bg-[#1E2340] border-2 border-indigo-900/20 dark:border-indigo-500/30 shadow-xl shadow-indigo-900/5 dark:shadow-indigo-950/40 p-5 rounded-3xl max-w-md mx-auto space-y-4 font-sans">
+      {/* Visual Priority Indigo & Amber Banner Header */}
+      <div className="bg-gradient-to-r from-indigo-950 via-indigo-900 to-indigo-800 text-white p-4 rounded-2xl flex items-center justify-between shadow-md border border-indigo-800/40">
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg bg-violet-500/20 border border-violet-500/30 flex items-center justify-center text-violet-400">
-            <Zap className="w-4 h-4" />
+          <div className="p-2 rounded-xl bg-amber-500/20 border border-amber-400/30 backdrop-blur-md text-amber-400 font-bold">
+            <Zap className="w-5 h-5 animate-pulse" />
           </div>
-          <h2 className="text-xl font-bold text-white tracking-tight">
-            {t("entry.quickEntryTitle")}
-          </h2>
+          <div>
+            <h2 className="text-base font-black tracking-tight leading-tight flex items-center gap-1.5">
+              <span>{t("entry.quickEntryTitle")}</span>
+            </h2>
+            <p className="text-[11px] text-indigo-200 font-medium">
+              High-priority piece-rate entry log
+            </p>
+          </div>
         </div>
 
         {lastEntry && (
           <button
             type="button"
             onClick={handleRepeatLast}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-violet-600/20 border border-violet-500/30 text-violet-300 hover:bg-violet-600/30 transition"
+            className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-extrabold bg-white/15 hover:bg-white/25 text-white backdrop-blur-md transition shadow-sm border border-white/10"
           >
             <RotateCcw className="w-3.5 h-3.5" />
-            <span>{t("entry.repeatLast")}</span>
+            <span>Repeat</span>
           </button>
         )}
       </div>
 
       {errorMsg && (
-        <div className="flex items-center gap-2 p-3 bg-rose-950/40 border border-rose-900/60 text-rose-300 rounded-xl text-xs font-semibold">
-          <AlertCircle className="w-4 h-4 text-rose-400 shrink-0" />
+        <div className="flex items-center gap-2 p-3 bg-rose-100 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/60 text-rose-700 dark:text-rose-300 rounded-xl text-xs font-semibold">
+          <AlertCircle className="w-4 h-4 text-rose-500 dark:text-rose-400 shrink-0" />
           <span>{errorMsg}</span>
         </div>
       )}
 
       {successMsg && (
-        <div className="flex items-center gap-2 p-3 bg-emerald-950/40 border border-emerald-900/60 text-emerald-300 rounded-xl text-xs font-semibold">
-          <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+        <div className="flex items-center gap-2 p-3 bg-emerald-100 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-900/60 text-emerald-700 dark:text-emerald-300 rounded-xl text-xs font-semibold">
+          <CheckCircle2 className="w-4 h-4 text-emerald-500 dark:text-emerald-400 shrink-0" />
           <span>{successMsg}</span>
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        {/* Tailor Select */}
-        <div>
-          <label className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">
-            <User className="w-3.5 h-3.5 text-slate-500" />
-            <span>{t("entry.selectTailor")}</span>
-          </label>
-          <select
-            value={tailorId}
-            onChange={(e) => setTailorId(e.target.value)}
-            className="w-full h-11 px-3.5 rounded-xl bg-slate-950 text-white font-semibold text-sm border border-slate-800 focus:border-violet-500 focus:outline-none"
-          >
-            <option value="">-- {t("entry.selectTailor")} --</option>
-            {tailors.filter(t => t.active).map((t) => (
-              <option key={t.id} value={t.id}>
-                {t.name}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {/* Lot Select */}
-        <div>
-          <label className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">
-            <Layers className="w-3.5 h-3.5 text-slate-500" />
-            <span>{t("entry.selectLot")}</span>
-          </label>
-          <select
-            value={lotId}
-            onChange={(e) => setLotId(e.target.value)}
-            className="w-full h-11 px-3.5 rounded-xl bg-slate-950 text-white font-semibold text-sm border border-slate-800 focus:border-violet-500 focus:outline-none"
-          >
-            <option value="">-- {t("entry.selectLot")} --</option>
-            {lots.filter(l => l.status === "active").map((l) => (
-              <option key={l.id} value={l.id}>
-                {l.lot_no} ({l.style})
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {/* Operation & Rate */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      <form onSubmit={handleSubmit} className="space-y-3.5">
+        {/* Tailor & Lot Selection Row */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
           <div>
-            <label className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">
-              <Scissors className="w-3.5 h-3.5 text-slate-500" />
+            <label className="flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">
+              <User className="w-3 h-3 text-indigo-900 dark:text-indigo-400" />
+              <span>{t("entry.selectTailor")}</span>
+            </label>
+            <select
+              value={tailorId}
+              onChange={(e) => setTailorId(e.target.value)}
+              className="w-full h-10 px-3 rounded-xl bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white font-semibold text-xs border border-slate-200 dark:border-slate-800 focus:border-indigo-900 dark:focus:border-indigo-400 focus:outline-none"
+            >
+              <option value="">-- {t("entry.selectTailor")} --</option>
+              {tailors.filter((t) => t.active).map((t) => (
+                <option key={t.id} value={t.id}>
+                  {t.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label className="flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">
+              <Layers className="w-3 h-3 text-indigo-900 dark:text-indigo-400" />
+              <span>{t("entry.selectLot")}</span>
+            </label>
+            <select
+              value={lotId}
+              onChange={(e) => setLotId(e.target.value)}
+              className="w-full h-10 px-3 rounded-xl bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white font-semibold text-xs border border-slate-200 dark:border-slate-800 focus:border-indigo-900 dark:focus:border-indigo-400 focus:outline-none"
+            >
+              <option value="">-- {t("entry.selectLot")} --</option>
+              {lots.filter((l) => l.status === "active").map((l) => (
+                <option key={l.id} value={l.id}>
+                  {l.lot_no} ({l.style})
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        {/* Operation & Rate Row */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+          <div>
+            <label className="flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">
+              <Scissors className="w-3 h-3 text-indigo-900 dark:text-indigo-400" />
               <span>{t("entry.selectOperation")}</span>
             </label>
             <select
               value={operationId}
               onChange={(e) => handleOperationChange(e.target.value)}
-              className="w-full h-11 px-3.5 rounded-xl bg-slate-950 text-white font-semibold text-sm border border-slate-800 focus:border-violet-500 focus:outline-none"
+              className="w-full h-10 px-3 rounded-xl bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white font-semibold text-xs border border-slate-200 dark:border-slate-800 focus:border-indigo-900 dark:focus:border-indigo-400 focus:outline-none"
             >
               <option value="">-- {t("entry.selectOperation")} --</option>
               {operations.map((o) => (
@@ -193,61 +201,86 @@ export function QuickEntryForm({ tailors, lots, operations, lastEntry, onSave }:
           </div>
 
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">
-              {t("entry.ratePerPiece")}
+            <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">
+              {t("entry.ratePerPiece")} (₹)
             </label>
             <input
               type="number"
               step="0.01"
               min="0"
               value={rateRupees}
+              inputMode="none"
               onChange={(e) => setRateRupees(parseFloat(e.target.value) || 0)}
-              className="w-full h-11 px-3.5 rounded-xl bg-slate-950 text-white font-bold text-sm border border-slate-800 focus:border-violet-500 focus:outline-none"
+              className="w-full h-10 px-3 rounded-xl bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white font-bold text-xs border border-slate-200 dark:border-slate-800 focus:border-indigo-900 dark:focus:border-indigo-400 focus:outline-none"
             />
           </div>
         </div>
 
-        {/* Date Selection */}
+        {/* Work Date Selection */}
         <div>
-          <label className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">
-            <Calendar className="w-3.5 h-3.5 text-slate-500" />
+          <label className="flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">
+            <Calendar className="w-3 h-3 text-indigo-900 dark:text-indigo-400" />
             <span>{t("entry.workDate")}</span>
           </label>
           <input
             type="date"
             value={workDate}
+            inputMode="none"
             onChange={(e) => setWorkDate(e.target.value)}
-            className="w-full h-11 px-3.5 rounded-xl bg-slate-950 text-white font-semibold text-sm border border-slate-800 focus:border-violet-500 focus:outline-none"
+            className="w-full h-10 px-3 rounded-xl bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white font-semibold text-xs border border-slate-200 dark:border-slate-800 focus:border-indigo-900 dark:focus:border-indigo-400 focus:outline-none"
           />
         </div>
 
-        {/* Summary Card */}
-        <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800 flex items-center justify-between">
-          <div>
-            <div className="text-[11px] uppercase font-semibold text-slate-400 tracking-wider">
+        {/* Compact Pieces Input Control with Steppers */}
+        <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 space-y-2">
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] uppercase font-bold text-slate-500 dark:text-slate-400 tracking-wider">
               {t("entry.piecesCount")}
-            </div>
-            <div className="text-3xl font-extrabold text-violet-400">{pieces}</div>
+            </span>
+            <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400">
+              Total: {formatINR(totalValuePaise)}
+            </span>
           </div>
-          <div className="text-right">
-            <div className="text-[11px] uppercase font-semibold text-slate-400 tracking-wider">
-              {t("entry.totalEarnings")}
-            </div>
-            <div className="text-xl font-bold text-emerald-400">
-              {formatINR(totalValuePaise)}
-            </div>
+
+          <div className="flex items-center gap-2">
+            {/* -1 button */}
+            <button
+              type="button"
+              onClick={() => setPieces((p) => Math.max(1, p - 1))}
+              className="h-11 w-11 shrink-0 rounded-xl bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-200 font-bold hover:bg-slate-300 dark:hover:bg-slate-700 active:scale-95 transition flex items-center justify-center select-none"
+            >
+              <Minus className="w-4 h-4" />
+            </button>
+
+            {/* piece count input */}
+            <input
+              type="number"
+              min="1"
+              value={pieces}
+              onChange={(e) => {
+                const val = parseInt(e.target.value, 10);
+                setPieces(isNaN(val) || val < 1 ? 1 : val);
+              }}
+              className="flex-1 min-w-0 h-11 px-2 rounded-xl bg-white dark:bg-slate-900 text-center text-2xl font-black text-indigo-900 dark:text-amber-400 border border-slate-300 dark:border-slate-700 focus:border-indigo-900 dark:focus:border-indigo-400 focus:outline-none"
+            />
+
+            {/* +1 button */}
+            <button
+              type="button"
+              onClick={() => setPieces((p) => p + 1)}
+              className="h-11 w-11 shrink-0 rounded-xl bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-200 font-bold hover:bg-slate-300 dark:hover:bg-slate-700 active:scale-95 transition flex items-center justify-center select-none"
+            >
+              <Plus className="w-4 h-4" />
+            </button>
           </div>
         </div>
 
-        {/* Number Pad */}
-        <NumberPad value={pieces} onChange={(val) => setPieces(val)} />
-
-        {/* Save Button */}
+        {/* High Priority Save Button */}
         <button
           type="submit"
-          className="w-full h-14 mt-2 rounded-xl bg-violet-600 hover:bg-violet-500 text-white font-bold text-base shadow-lg shadow-violet-600/25 active:scale-98 transition flex items-center justify-center gap-2"
+          className="w-full h-12 rounded-2xl bg-indigo-900 dark:bg-indigo-600 hover:bg-indigo-800 dark:hover:bg-indigo-500 active:bg-indigo-950 text-white font-black text-sm shadow-lg shadow-indigo-900/25 active:scale-[0.98] transition-all flex items-center justify-center gap-2 cursor-pointer"
         >
-          <Save className="w-5 h-5" />
+          <Save className="w-4 h-4" />
           <span>{t("entry.saveEntry")}</span>
         </button>
       </form>

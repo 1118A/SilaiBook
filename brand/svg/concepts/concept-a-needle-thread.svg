@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" aria-label="Concept A: Needle Eye & Verified Thread">
+  <defs>
+    <style>
+      :root {
+        --mark-primary: #2B3A8C;
+        --mark-accent: #E9A21B;
+        --mark-success: #2E7D4F;
+      }
+    </style>
+  </defs>
+  <!-- Background Safe Grid 512x512, Safe Area Central 410x410 -->
+  <!-- Needle Body: Tapered rounded steel silhouette -->
+  <path d="M190 70 C240 70 270 100 270 150 L270 380 C270 410 245 440 215 440 C185 440 160 410 160 380 L160 150 C160 100 190 70 190 70 Z" 
+        fill="none" 
+        stroke="var(--mark-primary, #2B3A8C)" 
+        stroke-width="32" 
+        stroke-linecap="round" 
+        stroke-linejoin="round" />
+
+  <!-- Needle Eye Slot -->
+  <rect x="200" y="130" width="30" height="90" rx="15" 
+        fill="var(--mark-primary, #2B3A8C)" />
+
+  <!-- Thread: Enters through the eye and forms a strong, bold verified tick (check mark) -->
+  <path d="M110 220 Q160 175 215 175 Q290 175 320 230 L220 330 L390 160" 
+        fill="none" 
+        stroke="var(--mark-accent, #E9A21B)" 
+        stroke-width="36" 
+        stroke-linecap="round" 
+        stroke-linejoin="round" />
+</svg>

@@ -36,13 +36,13 @@ export function TailorManagement({ tailors, onAddTailor, onToggleActive }: Tailo
   };
 
   return (
-    <div className="bg-slate-900 p-6 rounded-3xl border border-slate-800 shadow-xl space-y-6">
+    <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg bg-violet-500/20 border border-violet-500/30 flex items-center justify-center text-violet-400">
+          <div className="w-8 h-8 rounded-lg bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center text-indigo-900 dark:text-indigo-400">
             <Users className="w-4 h-4" />
           </div>
-          <h2 className="text-xl font-bold text-white tracking-tight">
+          <h2 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight">
             {t("tailors.title")} ({tailors.length})
           </h2>
         </div>
@@ -50,7 +50,7 @@ export function TailorManagement({ tailors, onAddTailor, onToggleActive }: Tailo
         <button
           type="button"
           onClick={() => setShowAdd(!showAdd)}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-violet-600 hover:bg-violet-500 text-white font-semibold text-xs transition"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-indigo-900 dark:bg-indigo-600 hover:bg-indigo-800 dark:hover:bg-indigo-500 text-white font-semibold text-xs transition"
         >
           {showAdd ? (
             <>
@@ -67,25 +67,25 @@ export function TailorManagement({ tailors, onAddTailor, onToggleActive }: Tailo
       </div>
 
       {showAdd && (
-        <form onSubmit={handleSubmit} className="p-4 bg-slate-950 border border-slate-800 rounded-2xl space-y-3">
-          {errorMsg && <div className="text-rose-400 font-semibold text-xs">{errorMsg}</div>}
+        <form onSubmit={handleSubmit} className="p-4 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl space-y-3">
+          {errorMsg && <div className="text-rose-600 dark:text-rose-400 font-semibold text-xs">{errorMsg}</div>}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-semibold text-slate-400 mb-1">{t("tailors.name")}</label>
+              <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">{t("tailors.name")}</label>
               <input
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="w-full h-10 px-3 rounded-xl bg-slate-900 font-semibold text-white border border-slate-800 text-xs focus:border-violet-500 focus:outline-none"
+                className="w-full h-10 px-3 rounded-xl bg-white dark:bg-slate-900 font-semibold text-slate-900 dark:text-white border border-slate-200 dark:border-slate-800 text-xs focus:border-indigo-900 dark:focus:border-indigo-500 focus:outline-none"
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-400 mb-1">{t("tailors.phone")}</label>
+              <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">{t("tailors.phone")}</label>
               <input
                 type="tel"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
-                className="w-full h-10 px-3 rounded-xl bg-slate-900 font-semibold text-white border border-slate-800 text-xs focus:border-violet-500 focus:outline-none"
+                className="w-full h-10 px-3 rounded-xl bg-white dark:bg-slate-900 font-semibold text-slate-900 dark:text-white border border-slate-200 dark:border-slate-800 text-xs focus:border-indigo-900 dark:focus:border-indigo-500 focus:outline-none"
               />
             </div>
           </div>
@@ -102,13 +102,13 @@ export function TailorManagement({ tailors, onAddTailor, onToggleActive }: Tailo
         {tailors.map((tailor) => (
           <div
             key={tailor.id}
-            className="p-4 rounded-2xl bg-slate-950 border border-slate-800/80 flex items-center justify-between"
+            className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800/80 flex items-center justify-between"
           >
             <div>
-              <div className="font-bold text-white text-sm">{tailor.name}</div>
+              <div className="font-bold text-slate-900 dark:text-white text-sm">{tailor.name}</div>
               {tailor.phone && (
-                <div className="text-xs text-slate-400 font-medium flex items-center gap-1 mt-0.5">
-                  <Phone className="w-3 h-3 text-slate-500" />
+                <div className="text-xs text-slate-500 dark:text-slate-400 font-medium flex items-center gap-1 mt-0.5">
+                  <Phone className="w-3 h-3 text-slate-400 dark:text-slate-500" />
                   <span>{tailor.phone}</span>
                 </div>
               )}
@@ -118,8 +118,8 @@ export function TailorManagement({ tailors, onAddTailor, onToggleActive }: Tailo
               type="button"
               onClick={() => onToggleActive(tailor.id)}
               className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase border transition ${tailor.active
-                  ? "bg-emerald-950 text-emerald-300 border-emerald-800/50"
-                  : "bg-slate-900 text-slate-400 border-slate-800"
+                ? "bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800/50"
+                : "bg-slate-200 dark:bg-slate-900 text-slate-600 dark:text-slate-400 border-slate-300 dark:border-slate-800"
                 }`}
             >
               {tailor.active ? t("tailors.active") : t("tailors.archived")}

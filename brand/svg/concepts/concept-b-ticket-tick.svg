@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" aria-label="Concept B: Bundle Ticket with Running Stitch & Verified Checkmark">
+  <defs>
+    <style>
+      :root {
+        --mark-primary: #2B3A8C;
+        --mark-accent: #E9A21B;
+      }
+    </style>
+  </defs>
+  <!-- Bundle Ticket Body with Notched Edge -->
+  <path d="M120 90 L390 90 C406 90 420 104 420 120 L420 220 C395 220 375 238 375 256 C375 274 395 292 420 292 L420 392 C420 408 406 422 390 422 L120 422 C104 422 90 408 90 392 L90 292 C115 292 135 274 135 256 C135 238 115 220 90 220 L90 120 C90 104 104 90 120 90 Z" 
+        fill="none" 
+        stroke="var(--mark-primary, #2B3A8C)" 
+        stroke-width="32" 
+        stroke-linecap="round" 
+        stroke-linejoin="round" />
+
+  <!-- Running stitch dashed inner perimeter -->
+  <path d="M140 140 L370 140 M370 372 L140 372" 
+        fill="none" 
+        stroke="var(--mark-primary, #2B3A8C)" 
+        stroke-width="14" 
+        stroke-linecap="round" 
+        stroke-dasharray="24 18" />
+
+  <!-- Bold verified tick across the ticket -->
+  <path d="M170 256 L240 326 L360 186" 
+        fill="none" 
+        stroke="var(--mark-accent, #E9A21B)" 
+        stroke-width="40" 
+        stroke-linecap="round" 
+        stroke-linejoin="round" />
+</svg>

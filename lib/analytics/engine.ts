@@ -26,7 +26,7 @@ export interface LotAnalyticsMetric {
   costPerPiecePaise: number;
   tailorCount: number;
   tailorsWorked: string[];
-  recentDailyPace: number; // average pieces per day over last 7 active days
+  recentDailyPace: number;
   projectedDaysRemaining: number;
   projectedCompletionDate: string;
 }
@@ -48,80 +48,61 @@ export interface OverallKPIs {
   rejectionRatePercent: number;
 }
 
-/**
- * Calculate overall Manager KPI stats.
- */
 export function getOverallAnalytics(entries: PieceEntry[], monthStr: string): OverallKPIs {
   const today = new Date().toISOString().split("T")[0];
-  const targetYearMonth = monthStr.substring(0, 7);
+  const targetMonth = monthStr.substring(0, 7);
 
-  const monthEntries = entries.filter((e) => e.work_date.startsWith(targetYearMonth));
-  const verifiedMonthEntries = monthEntries.filter((e) => e.status === "verified");
+  let piecesToday = 0, piecesThisMonth = 0, payrollSoFarPaise = 0;
+  let pendingReviewsCount = 0, totalMonthCount = 0, rejectedMonthCount = 0;
 
-  const piecesToday = entries
-    .filter((e) => e.work_date === today && e.status === "verified")
-    .reduce((acc, curr) => acc + curr.pieces, 0);
+  for (const e of entries) {
+    if (e.status === "pending") pendingReviewsCount++;
 
-  const piecesThisMonth = verifiedMonthEntries.reduce((acc, curr) => acc + curr.pieces, 0);
-
-  const payrollSoFarPaise = verifiedMonthEntries.reduce(
-    (acc, curr) => acc + multiplyPaise(curr.rate_paise, curr.pieces),
-    0
-  );
-
-  const pendingReviewsCount = entries.filter((e) => e.status === "pending").length;
-
-  const totalMonthEntriesCount = monthEntries.length;
-  const rejectedMonthEntriesCount = monthEntries.filter((e) => e.status === "rejected").length;
-  const rejectionRatePercent =
-    totalMonthEntriesCount > 0
-      ? Math.round((rejectedMonthEntriesCount / totalMonthEntriesCount) * 100)
-      : 0;
+    if (e.work_date.startsWith(targetMonth)) {
+      totalMonthCount++;
+      if (e.status === "rejected") rejectedMonthCount++;
+      if (e.status === "verified") {
+        piecesThisMonth += e.pieces;
+        payrollSoFarPaise += multiplyPaise(e.rate_paise, e.pieces);
+        if (e.work_date === today) piecesToday += e.pieces;
+      }
+    }
+  }
 
   return {
     piecesToday,
     piecesThisMonth,
     payrollSoFarPaise,
     pendingReviewsCount,
-    rejectionRatePercent,
+    rejectionRatePercent: totalMonthCount > 0 ? Math.round((rejectedMonthCount / totalMonthCount) * 100) : 0,
   };
 }
 
-/**
- * Calculate performance metrics per tailor.
- */
 export function getTailorAnalytics(
   entries: PieceEntry[],
   tailors: Tailor[],
   monthStr: string
 ): TailorPerformanceMetric[] {
-  const targetYearMonth = monthStr.substring(0, 7);
+  const targetMonth = monthStr.substring(0, 7);
 
   return tailors.map((tailor) => {
-    const tailorMonthEntries = entries.filter(
-      (e) => e.tailor_id === tailor.id && e.work_date.startsWith(targetYearMonth)
-    );
-
-    const verifiedEntries = tailorMonthEntries.filter((e) => e.status === "verified");
-    const verifiedPieces = verifiedEntries.reduce((acc, curr) => acc + curr.pieces, 0);
-
-    const totalEarningsPaise = verifiedEntries.reduce(
-      (acc, curr) => acc + multiplyPaise(curr.rate_paise, curr.pieces),
-      0
-    );
-
-    // Group verified pieces by day
+    let verifiedPieces = 0, totalEntries = 0, totalEarningsPaise = 0, rejectedCount = 0;
     const dayMap: Record<string, number> = {};
-    verifiedEntries.forEach((e) => {
-      dayMap[e.work_date] = (dayMap[e.work_date] || 0) + e.pieces;
-    });
 
-    const activeDaysCount = Object.keys(dayMap).length;
-    const avgPiecesPerDay = activeDaysCount > 0 ? Math.round(verifiedPieces / activeDaysCount) : 0;
+    for (const e of entries) {
+      if (e.tailor_id === tailor.id && e.work_date.startsWith(targetMonth)) {
+        totalEntries++;
+        if (e.status === "rejected") rejectedCount++;
+        if (e.status === "verified") {
+          verifiedPieces += e.pieces;
+          totalEarningsPaise += multiplyPaise(e.rate_paise, e.pieces);
+          dayMap[e.work_date] = (dayMap[e.work_date] || 0) + e.pieces;
+        }
+      }
+    }
 
-    let bestDayDate = "—";
-    let bestDayPieces = 0;
-
+    const activeDays = Object.keys(dayMap).length;
+    let bestDayDate = "—", bestDayPieces = 0;
     Object.entries(dayMap).forEach(([date, pcs]) => {
       if (pcs > bestDayPieces) {
         bestDayPieces = pcs;
@@ -129,69 +110,49 @@ export function getTailorAnalytics(
       }
     });
 
-    const totalCount = tailorMonthEntries.length;
-    const rejectedCount = tailorMonthEntries.filter((e) => e.status === "rejected").length;
-    const rejectionRatePercent = totalCount > 0 ? Math.round((rejectedCount / totalCount) * 100) : 0;
-
-    const dailyTrend = Object.entries(dayMap).map(([date, pieces]) => ({ date, pieces }));
-
     return {
       tailorId: tailor.id,
       tailorName: tailor.name,
       verifiedPieces,
-      totalEntries: totalCount,
+      totalEntries,
       totalEarningsPaise,
-      avgPiecesPerDay,
+      avgPiecesPerDay: activeDays > 0 ? Math.round(verifiedPieces / activeDays) : 0,
       bestDayDate,
       bestDayPieces,
-      rejectionRatePercent,
-      dailyTrend,
+      rejectionRatePercent: totalEntries > 0 ? Math.round((rejectedCount / totalEntries) * 100) : 0,
+      dailyTrend: Object.entries(dayMap).map(([date, pieces]) => ({ date, pieces })),
     };
   });
 }
 
-/**
- * Calculate analytics metrics per Lot.
- */
-export function getLotAnalytics(
-  entries: PieceEntry[],
-  lots: Lot[],
-  tailors: Tailor[]
-): LotAnalyticsMetric[] {
-  return lots.map((lot) => {
-    const lotEntries = entries.filter((e) => e.lot_id === lot.id && e.status === "verified");
+export function getLotAnalytics(entries: PieceEntry[], lots: Lot[], tailors: Tailor[]): LotAnalyticsMetric[] {
+  const tailorNameMap = new Map(tailors.map((t) => [t.id, t.name]));
 
-    const completedPieces = lotEntries.reduce((acc, curr) => acc + curr.pieces, 0);
+  return lots.map((lot) => {
+    let completedPieces = 0, totalLaborCostPaise = 0;
+    const tailorIds = new Set<string>();
+    const dayMap: Record<string, number> = {};
+
+    for (const e of entries) {
+      if (e.lot_id === lot.id && e.status === "verified") {
+        completedPieces += e.pieces;
+        totalLaborCostPaise += multiplyPaise(e.rate_paise, e.pieces);
+        tailorIds.add(e.tailor_id);
+        dayMap[e.work_date] = (dayMap[e.work_date] || 0) + e.pieces;
+      }
+    }
+
     const remainingPieces = Math.max(0, lot.total_pieces - completedPieces);
     const percentage = lot.total_pieces > 0 ? Math.min(100, Math.round((completedPieces / lot.total_pieces) * 100)) : 0;
+    const tailorsWorked = Array.from(tailorIds).map((id) => tailorNameMap.get(id)).filter(Boolean) as string[];
 
-    const totalLaborCostPaise = lotEntries.reduce(
-      (acc, curr) => acc + multiplyPaise(curr.rate_paise, curr.pieces),
-      0
-    );
-
-    const costPerPiecePaise = completedPieces > 0 ? Math.round(totalLaborCostPaise / completedPieces) : 0;
-
-    const tailorIds = Array.from(new Set(lotEntries.map((e) => e.tailor_id)));
-    const tailorsWorked = tailorIds
-      .map((id) => tailors.find((t) => t.id === id)?.name)
-      .filter(Boolean) as string[];
-
-    // Calculate recent pace (last 7 active days)
-    const dayMap: Record<string, number> = {};
-    lotEntries.forEach((e) => {
-      dayMap[e.work_date] = (dayMap[e.work_date] || 0) + e.pieces;
-    });
-
-    const dates = Object.keys(dayMap).sort().slice(-7);
-    const recentPiecesTotal = dates.reduce((acc, d) => acc + dayMap[d], 0);
-    const recentDailyPace = dates.length > 0 ? Math.max(1, Math.round(recentPiecesTotal / dates.length)) : 10;
-
+    const activeDates = Object.keys(dayMap).sort().slice(-7);
+    const recentTotal = activeDates.reduce((acc, d) => acc + dayMap[d], 0);
+    const recentDailyPace = activeDates.length > 0 ? Math.max(1, Math.round(recentTotal / activeDates.length)) : 10;
     const projectedDaysRemaining = remainingPieces > 0 ? Math.ceil(remainingPieces / recentDailyPace) : 0;
 
     const targetDate = new Date();
     targetDate.setDate(targetDate.getDate() + projectedDaysRemaining);
-    const projectedCompletionDate = remainingPieces === 0 ? "Completed" : targetDate.toISOString().split("T")[0];
 
     return {
       lotId: lot.id,
@@ -202,33 +163,26 @@ export function getLotAnalytics(
       remainingPieces,
       percentage,
       totalLaborCostPaise,
-      costPerPiecePaise,
-      tailorCount: tailorIds.length,
+      costPerPiecePaise: completedPieces > 0 ? Math.round(totalLaborCostPaise / completedPieces) : 0,
+      tailorCount: tailorIds.size,
       tailorsWorked,
       recentDailyPace,
       projectedDaysRemaining,
-      projectedCompletionDate,
+      projectedCompletionDate: remainingPieces === 0 ? "Completed" : targetDate.toISOString().split("T")[0],
     };
   });
 }
 
-/**
- * Calculate output & average piece rate per operation.
- */
-export function getOperationAnalytics(
-  entries: PieceEntry[],
-  operations: Operation[]
-): OperationAnalyticsMetric[] {
+export function getOperationAnalytics(entries: PieceEntry[], operations: Operation[]): OperationAnalyticsMetric[] {
   return operations.map((op) => {
-    const opEntries = entries.filter((e) => e.operation_id === op.id && e.status === "verified");
+    let totalPieces = 0, totalEarningsPaise = 0;
 
-    const totalPieces = opEntries.reduce((acc, curr) => acc + curr.pieces, 0);
-    const totalEarningsPaise = opEntries.reduce(
-      (acc, curr) => acc + multiplyPaise(curr.rate_paise, curr.pieces),
-      0
-    );
-
-    const avgRatePaise = totalPieces > 0 ? Math.round(totalEarningsPaise / totalPieces) : op.default_rate_paise;
+    for (const e of entries) {
+      if (e.operation_id === op.id && e.status === "verified") {
+        totalPieces += e.pieces;
+        totalEarningsPaise += multiplyPaise(e.rate_paise, e.pieces);
+      }
+    }
 
     return {
       operationId: op.id,
@@ -236,7 +190,7 @@ export function getOperationAnalytics(
       totalPieces,
       defaultRatePaise: op.default_rate_paise,
       totalEarningsPaise,
-      avgRatePaise,
+      avgRatePaise: totalPieces > 0 ? Math.round(totalEarningsPaise / totalPieces) : op.default_rate_paise,
     };
   });
 }

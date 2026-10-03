@@ -17,7 +17,7 @@ export interface TailorMonthlySalary {
 }
 
 export interface UnitMonthlySalarySummary {
-  month: string; // YYYY-MM
+  month: string;
   totalVerifiedPieces: number;
   totalGrossPaise: number;
   totalBonusPaise: number;
@@ -29,77 +29,44 @@ export interface UnitMonthlySalarySummary {
   calculatedAt: string;
 }
 
-/**
- * Pure function to calculate monthly salary totals for all tailors.
- *
- * Rules:
- * - Gross = Σ(verified pieces × rate_paise)
- * - Net = Gross + Bonus − Advance − Deduction
- * - Pending/rejected entries are EXCLUDED from Gross and Net,
- *   but pending amounts are tracked in `pendingPaise` for manager awareness.
- * - Negative net amounts trigger `negativeNetWarning: true`.
- */
 export function calculateMonthlySalary(
   tailors: Tailor[],
   entries: PieceEntry[],
   adjustments: Adjustment[],
-  monthDateStr: string // YYYY-MM
+  monthDateStr: string
 ): UnitMonthlySalarySummary {
-  const targetYearMonth = monthDateStr.substring(0, 7); // e.g. "2026-09"
+  const targetMonth = monthDateStr.substring(0, 7);
 
-  let totalVerifiedPieces = 0;
-  let totalGrossPaise = 0;
-  let totalBonusPaise = 0;
-  let totalAdvancePaise = 0;
-  let totalDeductionPaise = 0;
-  let totalNetPaise = 0;
-  let totalPendingPaise = 0;
+  let totalVerifiedPieces = 0, totalGrossPaise = 0, totalBonusPaise = 0;
+  let totalAdvancePaise = 0, totalDeductionPaise = 0, totalNetPaise = 0, totalPendingPaise = 0;
 
   const tailorSummaries: TailorMonthlySalary[] = tailors.map((tailor) => {
-    // Filter verified entries for this tailor in target month
-    const tailorMonthEntries = entries.filter((e) => {
-      return e.tailor_id === tailor.id && e.work_date.startsWith(targetYearMonth);
-    });
+    let verifiedPieces = 0, grossPaise = 0, pendingPieces = 0, pendingPaise = 0, entriesCount = 0;
 
-    const verifiedEntries = tailorMonthEntries.filter((e) => e.status === "verified");
-    const pendingEntries = tailorMonthEntries.filter((e) => e.status === "pending");
+    for (const e of entries) {
+      if (e.tailor_id === tailor.id && e.work_date.startsWith(targetMonth)) {
+        entriesCount++;
+        const paise = multiplyPaise(e.rate_paise, e.pieces);
+        if (e.status === "verified") {
+          verifiedPieces += e.pieces;
+          grossPaise += paise;
+        } else if (e.status === "pending") {
+          pendingPieces += e.pieces;
+          pendingPaise += paise;
+        }
+      }
+    }
 
-    const verifiedPieces = verifiedEntries.reduce((acc, curr) => acc + curr.pieces, 0);
-    const grossPaise = verifiedEntries.reduce(
-      (acc, curr) => acc + multiplyPaise(curr.rate_paise, curr.pieces),
-      0
-    );
+    let bonusPaise = 0, advancePaise = 0, deductionPaise = 0;
+    for (const a of adjustments) {
+      if (a.tailor_id === tailor.id && a.month.startsWith(targetMonth)) {
+        if (a.type === "bonus") bonusPaise += a.amount_paise;
+        else if (a.type === "advance") advancePaise += a.amount_paise;
+        else if (a.type === "deduction") deductionPaise += a.amount_paise;
+      }
+    }
 
-    const pendingPieces = pendingEntries.reduce((acc, curr) => acc + curr.pieces, 0);
-    const pendingPaise = pendingEntries.reduce(
-      (acc, curr) => acc + multiplyPaise(curr.rate_paise, curr.pieces),
-      0
-    );
-
-    // Filter adjustments for this tailor in target month
-    const tailorAdjustments = adjustments.filter((a) => {
-      return a.tailor_id === tailor.id && a.month.startsWith(targetYearMonth);
-    });
-
-    const bonusPaise = tailorAdjustments
-      .filter((a) => a.type === "bonus")
-      .reduce((acc, curr) => acc + curr.amount_paise, 0);
-
-    const advancePaise = tailorAdjustments
-      .filter((a) => a.type === "advance")
-      .reduce((acc, curr) => acc + curr.amount_paise, 0);
-
-    const deductionPaise = tailorAdjustments
-      .filter((a) => a.type === "deduction")
-      .reduce((acc, curr) => acc + curr.amount_paise, 0);
-
-    // Net = Gross + Bonus - Advance - Deduction
-    const netPaise = subtractPaise(
-      addPaise(grossPaise, bonusPaise),
-      addPaise(advancePaise, deductionPaise)
-    );
-
-    const negativeNetWarning = netPaise < 0;
+    const netPaise = subtractPaise(addPaise(grossPaise, bonusPaise), addPaise(advancePaise, deductionPaise));
 
     totalVerifiedPieces += verifiedPieces;
     totalGrossPaise += grossPaise;
@@ -120,13 +87,13 @@ export function calculateMonthlySalary(
       netPaise,
       pendingPieces,
       pendingPaise,
-      negativeNetWarning,
-      entriesCount: tailorMonthEntries.length,
+      negativeNetWarning: netPaise < 0,
+      entriesCount,
     };
   });
 
   return {
-    month: targetYearMonth,
+    month: targetMonth,
     totalVerifiedPieces,
     totalGrossPaise,
     totalBonusPaise,

@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" aria-label="Concept C: Thread forming Gujarati Dha Monogram with Needle Tip">
+  <defs>
+    <style>
+      :root {
+        --mark-primary: #2B3A8C;
+        --mark-accent: #E9A21B;
+      }
+    </style>
+  </defs>
+  <!-- Needle tip pointer at top left -->
+  <polygon points="120,110 145,95 140,125" fill="var(--mark-accent, #E9A21B)" />
+
+  <!-- Gujarati Dha (ધ) Geometric Thread Path -->
+  <path d="M140 115 C200 95 270 120 270 180 C270 230 220 250 200 256 C250 260 300 290 300 350 C300 410 230 430 160 410" 
+        fill="none" 
+        stroke="var(--mark-primary, #2B3A8C)" 
+        stroke-width="38" 
+        stroke-linecap="round" 
+        stroke-linejoin="round" />
+
+  <!-- Vertical thread backbone with needle eye at top right -->
+  <path d="M370 100 L370 420" 
+        fill="none" 
+        stroke="var(--mark-primary, #2B3A8C)" 
+        stroke-width="38" 
+        stroke-linecap="round" />
+
+  <!-- Connecting top horizontal bar & needle eye slot -->
+  <path d="M265 180 L370 180" 
+        fill="none" 
+        stroke="var(--mark-accent, #E9A21B)" 
+        stroke-width="32" 
+        stroke-linecap="round" />
+        
+  <circle cx="370" cy="140" r="10" fill="var(--mark-accent, #E9A21B)" />
+</svg>

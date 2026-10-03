@@ -30,14 +30,14 @@ export function NumberPad({ value, onChange }: NumberPadProps) {
   };
 
   return (
-    <div className="w-full max-w-sm mx-auto bg-slate-900/90 p-4 rounded-3xl border border-slate-800 shadow-xl">
+    <div className="w-full max-w-sm mx-auto bg-slate-100 dark:bg-slate-900/90 p-4 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm">
       <div className="grid grid-cols-3 gap-3 text-center">
         {["1", "2", "3", "4", "5", "6", "7", "8", "9"].map((n) => (
           <button
             key={n}
             type="button"
             onClick={() => handlePress(n)}
-            className="h-16 rounded-2xl bg-slate-800 hover:bg-violet-600 text-white font-bold text-2xl active:scale-95 transition-all shadow-sm flex items-center justify-center"
+            className="h-16 rounded-2xl bg-white dark:bg-slate-800 hover:bg-indigo-900 hover:text-white dark:hover:bg-indigo-600 text-slate-900 dark:text-white font-bold text-2xl active:scale-95 transition-all border border-slate-200 dark:border-slate-700/50 shadow-sm flex items-center justify-center"
           >
             {n}
           </button>
@@ -46,14 +46,14 @@ export function NumberPad({ value, onChange }: NumberPadProps) {
           type="button"
           onClick={handleClear}
           title="Clear"
-          className="h-16 rounded-2xl bg-rose-950/40 hover:bg-rose-900/60 text-rose-400 font-semibold text-sm active:scale-95 transition-all border border-rose-800/40 flex items-center justify-center gap-1"
+          className="h-16 rounded-2xl bg-rose-100 dark:bg-rose-950/40 hover:bg-rose-200 dark:hover:bg-rose-900/60 text-rose-600 dark:text-rose-400 font-semibold text-sm active:scale-95 transition-all border border-rose-200 dark:border-rose-800/40 flex items-center justify-center gap-1"
         >
           <RotateCcw className="w-5 h-5" />
         </button>
         <button
           type="button"
           onClick={() => handlePress("0")}
-          className="h-16 rounded-2xl bg-slate-800 hover:bg-violet-600 text-white font-bold text-2xl active:scale-95 transition-all shadow-sm flex items-center justify-center"
+          className="h-16 rounded-2xl bg-white dark:bg-slate-800 hover:bg-indigo-900 hover:text-white dark:hover:bg-indigo-600 text-slate-900 dark:text-white font-bold text-2xl active:scale-95 transition-all border border-slate-200 dark:border-slate-700/50 shadow-sm flex items-center justify-center"
         >
           0
         </button>
@@ -61,7 +61,7 @@ export function NumberPad({ value, onChange }: NumberPadProps) {
           type="button"
           onClick={handleBackspace}
           title="Backspace"
-          className="h-16 rounded-2xl bg-amber-950/40 hover:bg-amber-900/60 text-amber-400 font-semibold text-sm active:scale-95 transition-all border border-amber-800/40 flex items-center justify-center"
+          className="h-16 rounded-2xl bg-amber-100 dark:bg-amber-950/40 hover:bg-amber-200 dark:hover:bg-amber-900/60 text-amber-600 dark:text-amber-400 font-semibold text-sm active:scale-95 transition-all border border-amber-200 dark:border-amber-800/40 flex items-center justify-center"
         >
           <Delete className="w-5 h-5" />
         </button>

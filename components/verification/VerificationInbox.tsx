@@ -80,33 +80,33 @@ export function VerificationInbox({
   return (
     <div className="space-y-6">
       {/* Header & Settings Bar */}
-      <div className="bg-slate-900 p-6 rounded-3xl border border-slate-800 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-2xl bg-violet-600/20 border border-violet-500/30 flex items-center justify-center text-violet-400">
+          <div className="w-10 h-10 rounded-2xl bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center text-indigo-900 dark:text-indigo-400">
             <ShieldCheck className="w-5 h-5" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h2 className="text-xl font-bold text-white">{t("verification.inboxTitle")}</h2>
-              <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-violet-600 text-white shadow-sm">
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white">{t("verification.inboxTitle")}</h2>
+              <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-500 text-slate-950 shadow-sm">
                 {pendingEntries.length}
               </span>
             </div>
-            <p className="text-xs text-slate-400 mt-0.5">{t("verification.pendingCount")}</p>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{t("verification.pendingCount")}</p>
           </div>
         </div>
 
         {/* Auto verify toggle */}
-        <div className="flex items-center gap-3 bg-slate-950 p-2.5 rounded-2xl border border-slate-800">
-          <Sliders className="w-4 h-4 text-violet-400 ml-1" />
-          <span className="text-xs font-semibold text-slate-300">
+        <div className="flex items-center gap-3 bg-slate-50 dark:bg-slate-950 p-2.5 rounded-2xl border border-slate-200 dark:border-slate-800">
+          <Sliders className="w-4 h-4 text-indigo-900 dark:text-indigo-400 ml-1" />
+          <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">
             {t("verification.autoVerifyToggle")}
           </span>
           <button
             type="button"
             onClick={() => onToggleAutoVerify(!autoVerifyManager)}
             className={`w-11 h-6 rounded-full transition-colors relative p-0.5 ${
-              autoVerifyManager ? "bg-violet-600" : "bg-slate-800"
+              autoVerifyManager ? "bg-indigo-900 dark:bg-indigo-600" : "bg-slate-300 dark:bg-slate-800"
             }`}
           >
             <div
@@ -119,20 +119,20 @@ export function VerificationInbox({
       </div>
 
       {successToast && (
-        <div className="p-3 bg-emerald-950/60 border border-emerald-800/80 text-emerald-300 rounded-xl text-xs font-semibold flex items-center gap-2">
-          <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+        <div className="p-3 bg-emerald-100 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800/80 text-emerald-700 dark:text-emerald-300 rounded-xl text-xs font-semibold flex items-center gap-2">
+          <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
           <span>{successToast}</span>
         </div>
       )}
 
       {/* Main Inbox Body */}
       {Object.keys(groupedPending).length === 0 ? (
-        <div className="bg-slate-900 p-12 rounded-3xl border border-slate-800 text-center space-y-3">
-          <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 mx-auto flex items-center justify-center">
+        <div className="bg-white dark:bg-slate-900 p-12 rounded-3xl border border-slate-200 dark:border-slate-800 text-center space-y-3 shadow-sm">
+          <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 mx-auto flex items-center justify-center">
             <CheckCircle2 className="w-6 h-6" />
           </div>
-          <h3 className="text-lg font-bold text-white">All caught up!</h3>
-          <p className="text-xs text-slate-400 max-w-sm mx-auto">
+          <h3 className="text-lg font-bold text-slate-900 dark:text-white">All caught up!</h3>
+          <p className="text-xs text-slate-500 dark:text-slate-400 max-w-sm mx-auto">
             There are no pending piece entries requiring verification right now.
           </p>
         </div>
@@ -150,25 +150,25 @@ export function VerificationInbox({
             return (
               <div
                 key={key}
-                className="bg-slate-900 p-6 rounded-3xl border border-slate-800 shadow-xl space-y-4"
+                className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-4"
               >
                 {/* Group Header */}
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-800">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-200 dark:border-slate-800">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-2xl bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-300">
+                    <div className="w-10 h-10 rounded-2xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-700 dark:text-slate-300">
                       <User className="w-5 h-5" />
                     </div>
                     <div>
-                      <h3 className="font-bold text-white text-base">{tailor?.name || "Tailor"}</h3>
-                      <div className="flex items-center gap-2 text-xs text-slate-400 mt-0.5">
+                      <h3 className="font-bold text-slate-900 dark:text-white text-base">{tailor?.name || "Tailor"}</h3>
+                      <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 mt-0.5">
                         <span className="flex items-center gap-1">
-                          <Calendar className="w-3 h-3 text-slate-500" />
+                          <Calendar className="w-3 h-3 text-slate-400 dark:text-slate-500" />
                           {first.work_date}
                         </span>
                         <span>•</span>
-                        <span className="font-semibold text-violet-400">{totalGroupPieces} pieces</span>
+                        <span className="font-semibold text-indigo-900 dark:text-indigo-400">{totalGroupPieces} pieces</span>
                         <span>•</span>
-                        <span className="font-semibold text-emerald-400">{formatINR(totalGroupPaise)}</span>
+                        <span className="font-semibold text-emerald-600 dark:text-emerald-400">{formatINR(totalGroupPaise)}</span>
                       </div>
                     </div>
                   </div>
@@ -198,16 +198,16 @@ export function VerificationInbox({
                     return (
                       <div
                         key={entry.id}
-                        className="p-4 rounded-2xl bg-slate-950 border border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+                        className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4"
                       >
                         <div className="space-y-1">
-                          <div className="font-bold text-white text-sm">
+                          <div className="font-bold text-slate-900 dark:text-white text-sm">
                             {lot ? `${lot.lot_no} — ${lot.style}` : "Lot"}
                           </div>
-                          <div className="text-xs text-slate-400 font-medium">
+                          <div className="text-xs text-slate-500 dark:text-slate-400 font-medium">
                             {op ? op.name : "Operation"} • {entry.pieces} pcs @ ₹{fromPaise(entry.rate_paise)}/pc
                           </div>
-                          <div className="text-sm font-extrabold text-emerald-400">
+                          <div className="text-sm font-extrabold text-emerald-600 dark:text-emerald-400">
                             {formatINR(totalPaise)}
                           </div>
                         </div>
@@ -230,7 +230,7 @@ export function VerificationInbox({
                           <button
                             type="button"
                             onClick={() => handleOpenRejectModal(entry.id)}
-                            className="flex-1 sm:flex-initial h-11 px-5 rounded-xl bg-rose-600/20 border border-rose-500/40 text-rose-300 hover:bg-rose-600 hover:text-white font-bold text-xs transition flex items-center justify-center gap-1.5"
+                            className="flex-1 sm:flex-initial h-11 px-5 rounded-xl bg-rose-100 dark:bg-rose-600/20 border border-rose-200 dark:border-rose-500/40 text-rose-700 dark:text-rose-300 hover:bg-rose-600 hover:text-white font-bold text-xs transition flex items-center justify-center gap-1.5"
                           >
                             <XCircle className="w-4 h-4" />
                             <span>{t("verification.reject")}</span>
@@ -249,13 +249,13 @@ export function VerificationInbox({
       {/* Rejection Reason Modal */}
       {rejectingEntryId && (
         <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-800 p-6 rounded-3xl max-w-md w-full shadow-2xl space-y-4">
-            <div className="flex items-center gap-2 text-rose-400">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-3xl max-w-md w-full shadow-2xl space-y-4">
+            <div className="flex items-center gap-2 text-rose-600 dark:text-rose-400">
               <AlertCircle className="w-5 h-5" />
-              <h3 className="text-lg font-bold text-white">{t("verification.rejectTitle")}</h3>
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white">{t("verification.rejectTitle")}</h3>
             </div>
 
-            <p className="text-xs text-slate-400">{t("verification.selectPresetReason")}</p>
+            <p className="text-xs text-slate-500 dark:text-slate-400">{t("verification.selectPresetReason")}</p>
 
             {/* Preset chips */}
             <div className="flex flex-wrap gap-2">
@@ -266,8 +266,8 @@ export function VerificationInbox({
                   onClick={() => setRejectNote(chip)}
                   className={`px-3 py-1.5 rounded-xl text-xs font-semibold border transition ${
                     rejectNote === chip
-                      ? "bg-violet-600 border-violet-500 text-white"
-                      : "bg-slate-950 border-slate-800 text-slate-300 hover:bg-slate-800"
+                      ? "bg-indigo-900 dark:bg-indigo-600 border-indigo-900 dark:border-indigo-600 text-white"
+                      : "bg-slate-100 dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800"
                   }`}
                 >
                   {chip}
@@ -281,14 +281,14 @@ export function VerificationInbox({
               placeholder="Or write additional details for tailor..."
               value={rejectNote}
               onChange={(e) => setRejectNote(e.target.value)}
-              className="w-full p-3 rounded-xl bg-slate-950 text-white text-xs border border-slate-800 focus:border-violet-500 focus:outline-none"
+              className="w-full p-3 rounded-xl bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white text-xs border border-slate-200 dark:border-slate-800 focus:border-indigo-900 dark:focus:border-indigo-500 focus:outline-none"
             />
 
             <div className="flex items-center gap-2 pt-2">
               <button
                 type="button"
                 onClick={() => setRejectingEntryId(null)}
-                className="flex-1 h-10 rounded-xl bg-slate-800 text-slate-300 font-semibold text-xs hover:bg-slate-700"
+                className="flex-1 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold text-xs hover:bg-slate-200 dark:hover:bg-slate-700"
               >
                 {t("common.cancel")}
               </button>

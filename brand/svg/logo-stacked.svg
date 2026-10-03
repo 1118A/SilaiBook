@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 480" aria-label="SilaiBook Stacked Logo">
+  <defs>
+    <style>
+      .brand-title { fill: #1F2340; font-family: system-ui, -apple-system, sans-serif; font-size: 52px; font-weight: 800; letter-spacing: -1px; text-anchor: middle; }
+      .brand-sub { fill: #5A6282; font-family: system-ui, -apple-system, sans-serif; font-size: 20px; font-weight: 600; text-anchor: middle; }
+    </style>
+  </defs>
+
+  <!-- Centered Mark -->
+  <g transform="translate(80, 20) scale(0.46875)">
+    <rect x="96" y="80" width="320" height="352" rx="72" fill="none" stroke="#2B3A8C" stroke-width="36" stroke-linecap="round" stroke-linejoin="round" />
+    <rect x="236" y="128" width="40" height="84" rx="20" fill="#2B3A8C" />
+    <path d="M160 260 L236 336 L368 184" fill="none" stroke="#E9A21B" stroke-width="44" stroke-linecap="round" stroke-linejoin="round" />
+  </g>
+
+  <!-- Stacked Typography -->
+  <text x="200" y="340" class="brand-title">
+    Silai<tspan fill="#E9A21B">Book</tspan>
+  </text>
+  <text x="200" y="390" class="brand-sub">
+    સિલાઈબુક · सिलाईबुक
+  </text>
+  <text x="200" y="425" class="brand-sub" font-size="16" fill="#8E9BFF">
+    Piece-Rate Ledger
+  </text>
+</svg>
