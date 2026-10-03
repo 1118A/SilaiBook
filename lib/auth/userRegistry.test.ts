@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach } from "vitest";
 import {
   findUserByEmail,
   registerNewUser,
-  updateUserStatus,
+  updateUserRole,
   saveUserRegistry,
   INITIAL_USERS,
 } from "./userRegistry";
@@ -48,14 +48,24 @@ describe("User Registry & Silent Role-Based Login System", () => {
     expect(result.user.role).toBe("owner");
   });
 
-  it("allows Main Admin to approve a pending user", () => {
-    const pendingUser = findUserByEmail("kantibhai@surattex.com");
-    expect(pendingUser?.status).toBe("pending_verification");
+  it("allows Main Admin to change role between tailor, manager, and unit owner", () => {
+    const tailor = findUserByEmail("tailor@silaibook.com");
+    expect(tailor).toBeDefined();
+    if (!tailor) return;
 
-    if (pendingUser) {
-      const updatedList = updateUserStatus(pendingUser.id, "approved");
-      const approved = updatedList.find((u) => u.id === pendingUser.id);
-      expect(approved?.status).toBe("approved");
-    }
+    // 1. Promote Tailor to Manager
+    const promotedToManager = updateUserRole(tailor.id, "manager");
+    const managerUser = promotedToManager.find((u) => u.id === tailor.id);
+    expect(managerUser?.role).toBe("manager");
+
+    // 2. Promote Manager to Unit Owner
+    const promotedToOwner = updateUserRole(tailor.id, "owner");
+    const ownerUser = promotedToOwner.find((u) => u.id === tailor.id);
+    expect(ownerUser?.role).toBe("owner");
+
+    // 3. Reassign Unit Owner back to Tailor
+    const reassignedToTailor = updateUserRole(tailor.id, "tailor");
+    const tailorUser = reassignedToTailor.find((u) => u.id === tailor.id);
+    expect(tailorUser?.role).toBe("tailor");
   });
 });

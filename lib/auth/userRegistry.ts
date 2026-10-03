@@ -218,3 +218,14 @@ export function updateUserStatus(userId: string, newStatus: UserStatus): Registe
   saveUserRegistry(updated);
   return updated;
 }
+
+/**
+ * Updates user role (e.g. promoting tailor to manager, manager to owner, etc.).
+ */
+export function updateUserRole(userId: string, newRole: Role): RegisteredUser[] {
+  const users = loadUserRegistry();
+  const updated = users.map((u) => (u.id === userId ? { ...u, role: newRole } : u));
+  saveUserRegistry(updated);
+  return updated;
+}
+
