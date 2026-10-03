@@ -7,7 +7,8 @@
 
 ## Pre-Launch Quality & Testing Checks
 - [x] **Linting & Code Standards:** `npm run lint` passes with 0 errors and 0 warnings.
-- [x] **Automated Unit & E2E Tests:** `npm test` passes 100% of tests (37/37 passing).
+- [x] **Automated Unit & E2E Tests:** `npm test` passes 100% of tests (65/65 passing across 15 test suites).
+- [x] **Camera QR & Barcode Bundle Scanner:** Fast optical scanner + printable QR bundle tickets (Palla Chit) for piece-rate lots with haptic feedback and manual barcode gun support.
 - [x] **Money & Currency Safety:** Integer paise arithmetic verified (`lib/money.ts`). Zero floating point usage for currency.
 - [x] **Multilingual i18n:** All UI strings localized across English (`EN`), Gujarati (`GU`), and Hindi (`HI`).
 - [x] **PWA & Offline Support:** `manifest.json`, `sw.js`, and IndexedDB sync engine operational with idempotency keys.
